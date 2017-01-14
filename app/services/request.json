@@ -1,0 +1,9 @@
+{
+  "space":["int", "int"],
+  "blocks":[
+    {"id":"String", "shape":"String", "coodinate":["int", "int"],"heavy":"boolean", "color":""},
+    {},
+    {}
+  ],
+  "order":["String","String","String",,,,,,]
+}
