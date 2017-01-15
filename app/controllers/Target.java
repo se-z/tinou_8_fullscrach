@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 class Constraint{
     String mID;
@@ -324,26 +326,98 @@ public class Target {//目標状態のリストを生成する
         return(space);
     }
     
-    ArrayList<Space> getSpace(ArrayList<HeatMap> a_hMapS){
+    boolean checkSpace(Space a_space){
+        for(HashMap.Entry<String,Integer[]> block:a_space.mBlocks.entrySet()){
+            if(block.getValue()[1] > 0 && //ブロックが宙に浮いていて
+                   (
+                    ! a_space.mBlocks.containsValue(new Integer[] {block.getValue()[0] ,block.getValue()[1]-1 })
+                    )//その下にブロックがない場合
+                    ){
+                return(false);
+            }
+        }
+        return(true);
+    }
+    
+    boolean containPositon(HashMap<String,Integer[]>blockMap,Integer[] pos){
+         for(HashMap.Entry<String,Integer[]> block:blockMap.entrySet()){
+            if(block.getValue()[0] == pos[0] && block.getValue()[1] == pos[1]){
+                return(true);
+            }
+        }
+        return(false);
+    }
+    
+    ArrayList<Space> getSpace(ArrayList<HeatMap> a_hMapS,ArrayList<Integer> a_spaceSize){
         ArrayList<Space> spaceS = new ArrayList<Space>();
+        ArrayList<ArrayList<Integer>> usedIndex = new ArrayList<ArrayList<Integer>>();
         int level,maxLevel = a_hMapS.size(),maxValue = 3,count=0;
         int[] indexS = new int [maxLevel];
         for(int index:indexS){
             index = 0;
         }
-        ArrayList<HeatMap> sortMap;
-        while(count < 100){
-            level = 0;
-            Space ans = new Space();
-            for(HeatMap map:a_hMapS){
-                if(map.valueS.get(indexS[level]) < maxValue ){//最大値より下であった場合
-                    ans.mBlocks.put(map.mID, map.positionS.get(indexS[level]));
-                }
-            }
-        }
         
-        return(spaceS);
-    }
+        while(spaceS.size() < 100){//  
+            Space ans = new Space();
+            for(int i = 0; i < a_spaceSize.get(0);++i){//空間、深さを初期代入
+                ans.mSpaceSize.put(i,new Integer[] {0,a_spaceSize.get(1)} );
+                ans.mXDepth.put(i, 0);
+            }
+            
+            for(level = 0; level < maxLevel;++level){//ヒートマップを先頭から調べる
+                HeatMap map = a_hMapS.get(level);
+                while((map.valueS.get(indexS[level]) > maxValue) || //最大値より大きいものは飛ばす
+                        //ans.mBlocks.containsValue(map.positionS.get(indexS[level]))
+                        containPositon(ans.mBlocks,map.positionS.get(indexS[level]))//既にある座標なら飛ばす
+                        ){
+                    ++indexS[level];
+                    if(indexS[level] >= map.positionS.size()){
+                        break;
+                    }
+                    for(int j=level+1; j < maxLevel;++j){
+                        indexS[j] = 0;//ここより下のヒートマップのインデックスはリセット
+                    }
+                }
+                
+                if(indexS[level] >= map.positionS.size()){
+                    System.out.println("New!");
+                    ++indexS[level-1];
+                    break;
+                }
+                else if(level == maxLevel-1){
+                    ++indexS[level];
+                }
+                ans.mBlocks.put(map.mID, map.positionS.get(indexS[level]));
+                Integer height = map.positionS.get(indexS[level])[1];
+                if(height >= 0){
+                     height = 0;
+                 }
+                    
+                int x = map.positionS.get(indexS[level])[0];
+                if(!ans.mXDepth.containsKey(x) ||  -height > ans.mXDepth.get(x)){
+                    ans.mSpaceSize.put(x,new Integer[] {0+height,a_spaceSize.get(1)} );
+                    ans.mXDepth.put(x, -height);
+                }
+                //};
+                 for(int index:indexS){
+                    System.out.print(index+",");
+                }
+                System.out.println(" level="+level);
+                
+        }//for(HeatMap map:a_hMapS)
+            ans.show();
+        if(checkSpace(ans)){
+            spaceS.add(ans);
+            System.out.print("indexS=");
+            for(int index:indexS){
+                System.out.print(index+",");
+            }
+            System.out.println("");         
+        }
+    }//while(count < 100)
+    System.out.println("Finish!"+spaceS.size());
+    return(spaceS);
+}
     
     ArrayList<Space> getTagetList(){
         ArrayList<Integer> space = new ArrayList<Integer>();
@@ -387,6 +461,7 @@ public class Target {//目標状態のリストを生成する
             }
         }
         
+        ArrayList<Space> ansList = getSpace(heatMapS,space);
         
         /*
         for(i = 0; i < start.length; ++i){
