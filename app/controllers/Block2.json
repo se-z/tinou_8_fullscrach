@@ -1,0 +1,11 @@
+{
+   "space":[5,5],
+    "blocks":[
+        {"id":"A","shape":"台形","color":"赤"},
+        {"id":"B","shape":"台形","color":"青"},
+        {"id":"C","shape":"三角","color":"黄色"},
+        {"id":"D","shape":"四角","color":"緑"},
+        {"id":"E","shape":"台形","color":"赤"}
+    ],
+    "order":["AはBの上","Aの右はD","CはAの左","Eの下はA"]
+}
