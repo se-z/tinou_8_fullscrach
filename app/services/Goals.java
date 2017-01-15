@@ -18,7 +18,7 @@ public class Goals {
     private String mCurrentID;
     private int mNumberInLine;
     private int mSeriesNumber;
-    private ArrayList<ArrayList<Integer>> mSeriesInteger = new ArrayList<>(); //初期化のタイミングって何か違いはあるのだろうか....
+    private ArrayList<ArrayList<Integer>> mSeriesInteger; //これ初期化しなくていい気がする
     private HashMap<Integer, String> mIDMap = new HashMap<>();
 
     public Goals(String[] aIDs) {

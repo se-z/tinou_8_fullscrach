@@ -4,7 +4,6 @@ package services;
  * Created by seijihagawa on 2017/01/12.
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
