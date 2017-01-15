@@ -25,7 +25,7 @@ public class Block {
 	 * 
 	 * @return 重いならtrue
 	 */
-	public boolean isHeavey(){
+	public boolean isHeavy(){
 		return mHeavy;
 	}
 	
