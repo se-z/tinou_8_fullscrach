@@ -1,4 +1,4 @@
-package controllers;
+﻿package controllers;
 import play.mvc.Controller;
 import play.mvc.Result;
 import java.io.FileInputStream;
@@ -9,10 +9,10 @@ import java.io.IOException;
  */
 public class HomeController extends Controller {
 
-
-    //
+    //これfullpath以外でやる方法ないかな....
     //private final String kFilePath = "/Users/seijihagawa/java/3rdClass/kadai8_play_fullScrach/app/views/index.html";
-    private final String kFilePath = "C:/play/activator-dist-1.3.12/bin/tinou_8_fullscrach/app/views/index.html";
+    private final String kFilePath = "./app/views/index.html";
+
     /**
      * アプリケーションが起動されて、localHostに対するアクセスに対するレスポンスを返す関数.
      * @return
