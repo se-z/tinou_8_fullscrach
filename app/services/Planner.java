@@ -9,6 +9,29 @@ import java.util.HashMap;
 /**
  * 現在の状態が目標状態になっているかを確かめ、プランを適用する
  *
+ * Planner
+ 現在の状態が目標状態に
+ なっているかを確かめ、
+ プランを適用する
+
+
+ + field: type
+ ・mGoals:Goals
+ ・mSubGoals:
+ map(key:id, value:subGoals)
+ ・mTargetSpace:Space
+ ・mTargetOptions:Space[]
+ ・mBlocks:Block[]
+ ・mCurrentSpace:Space
+ ・mTargetBlockID:string
+
+
+ + method(type): type
+ ・STRIPS(): ここの内部実装が結構複雑そう
+ ・matchState():boolean
+ ・setTargetBlock()
+
+ *
  */
 
 public class Planner {

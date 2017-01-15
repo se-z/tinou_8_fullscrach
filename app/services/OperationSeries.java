@@ -4,7 +4,6 @@ package services;
  * Created by seijihagawa on 2017/01/14.
  */
 
-import  play.api.libs.json.*;
 import com.fasterxml.jackson.annotation.*;
 
 /**
