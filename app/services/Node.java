@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Node {
     private Node mParentNode;
-    private Node[] mChildrenNodes;
+    private ArrayList<Node> mChildrenNodes;
     private Space mSpace;
     private ArrayList<Integer> mFalseChildren;
     private int mThisIndex; //同じ親を共有する個ノードの通し番号
@@ -28,12 +28,12 @@ public class Node {
         mThisIndex = aIndex;
     }
 
-    public void setChildrenNodes(Node[] aChildren) {
+    public void setChildrenNodes(ArrayList<Node> aChildren) {
         mChildrenNodes = aChildren;
     }
 
     public Node getChildNode(int aNumber) {
-        return mChildrenNodes[aNumber];
+        return mChildrenNodes.get(aNumber);
     }
 
     public Space getSpace(){
@@ -52,12 +52,12 @@ public class Node {
      * @return すべての子ノードで失敗している場合、nullを返却
      */
     public Node getNotFalseChild() {
-        if (mChildrenNodes.length == mFalseChildren.size()) {
+        if (mChildrenNodes.size() == mFalseChildren.size()) {
             return null;
         }
 
         int tChildNum = 0;
-        for (int i = 0; i < mChildrenNodes.length; i++) {
+        for (int i = 0; i < mChildrenNodes.size(); i++) {
             if (mFalseChildren.contains(i)) {
                 continue;
             }
@@ -65,11 +65,11 @@ public class Node {
             tChildNum = i;
             break;
         }
-        return mChildrenNodes[tChildNum];
+        return mChildrenNodes.get(tChildNum);
     }
 
     public boolean HaveNotFalse() {
-        if (mChildrenNodes.length != mFalseChildren.size()) {
+        if (mChildrenNodes.size() != mFalseChildren.size()) {
             return false;
         }
         return true;

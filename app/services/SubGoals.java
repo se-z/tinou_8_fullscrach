@@ -11,17 +11,11 @@ import java.util.Objects;
  * SubGoals
  * targetになっているブロックの目標状態を達成する。系列をバックトラックのために管理。
  * 木構造で管理しているが、別に木構造でなくても良い。このクラスはGoalsのノード数の回数だけ生成される
- * <p>
- * ・getSeries(aNodeName String):Space[]
- * (親ノードをたどって動作の系列を取得, このbackTrace時に穴の情報も追加する？)
- * ・backTrack(aNodeName String):Space
  */
 
 public class SubGoals {
     private Node mRootNode;
-    private Node mCurrentNode;
-    private String[] mMovedBlocks;  //targetのブロックではなく、今動かしているブロック
-
+    private Node mCurrentNode;  //このNodeの挙動は何度か見直しが必要 scopeが広いでのミスが起きそう
 
     /**
      * 初期化の手順はSTRIPSの実装で決める
@@ -37,10 +31,26 @@ public class SubGoals {
         return mCurrentNode.getSpace();
     }
 
+    /**
+     *
+     * @param aSpaces 一番目から優先順位の高いデータが入っているとする
+     */
+    public void putSpaces(ArrayList<Space> aSpaces){
+
+        ArrayList<Node> tChildren = new ArrayList<>();
+
+        for(int i = 0; i < aSpaces.size(); i++){
+            Space tSpace = aSpaces.get(i);
+            Node tChild = new Node(mCurrentNode, tSpace, i);
+            tChildren.add(tChild);
+        }
+        mCurrentNode.setChildrenNodes(tChildren);
+    }
 
     /**
      * すべての枝でbackTrackが失敗した場合、falseを返却する
      * whileの最初のif文でエラーがでないか心配
+     * Spaceの
      */
     public boolean backTrack() {
         while (true) {
@@ -70,7 +80,7 @@ public class SubGoals {
      * @return
      * 関数の終了後も、木構造におけるmCurrentNodeの位置に変化はない
      */
-    public ArrayList<Space> getSeries() {
+    public ArrayList<Space> getSubSeries() {
         ArrayList<Space> tSeries = new ArrayList<>();
         Node tMoveNode = mCurrentNode;
 
@@ -81,7 +91,7 @@ public class SubGoals {
                 break;
             }
             tMoveNode = tMoveNode.getParentNode();
-            tSeries.add(tMoveNode.getSpace());
+            tSeries.add(0,tMoveNode.getSpace()); //先頭に要素を追加
         }
         return tSeries;
     }
