@@ -269,8 +269,14 @@ function onExecButton(){
     make_hole();
     init_Animation();
   }
-  anim_start_ary = new Array(todo_array.length);
-  anim_end_ary = new Array(todo_array.length);
+
+  //anim_start_ary = new Array(todo_array.length);
+  //anim_end_ary = new Array(todo_array.length);
+  //anim_start_ary.fill(false,0,anim_start_ary.length);
+  //anim_end_ary.fill(false,0,anim_end_ary.length);
+
+  anim_start_ary = new Array(anim_process_array.length);
+  anim_end_ary = new Array(anim_process_array.length);
   anim_start_ary.fill(false,0,anim_start_ary.length);
   anim_end_ary.fill(false,0,anim_end_ary.length);
 
@@ -278,13 +284,22 @@ function onExecButton(){
   anim_start_ary[exec.step] = true;
   exec.anim_step = 0;exec.up = false;exec.hor = false;exec.down = false;
 
-  if(exec.step < todo_array.length){//プロセスが残っている場合
-    exec.step++;//次のプロセスへ
-    setTimeout(onExecButton,3000);//自分を時間差でまた呼び出す
-  }else{
-    exec.step = 0;
-    console.log('Exec finished'+todo_array.length);
- }
+
+    if(exec.step < anim_process_array.length){//プロセスが残っている場合
+      exec.step++;//次のプロセスへ
+      setTimeout(onExecButton,3000);//自分を時間差でまた呼び出す
+    }else{
+      exec.step = 0;
+      console.log('Exec finished'+anim_process_array.length);
+   }
+ //
+ //  if(exec.step < todo_array.length){//プロセスが残っている場合
+ //    exec.step++;//次のプロセスへ
+ //    setTimeout(onExecButton,3000);//自分を時間差でまた呼び出す
+ //  }else{
+ //    exec.step = 0;
+ //    console.log('Exec finished'+todo_array.length);
+ // }
 }
 
 //GUI上の初期状態、目標状態からファイルを作る
@@ -318,6 +333,7 @@ $('#ExecButton').on('click', function () {
 
 
 function make_hole(){
+  while(anim_process_array.pop());
   var count_hole = 1;
   var hole_mem = new Array();
   //hole_mem.push([0,0]);
@@ -836,8 +852,8 @@ function PrepareInitialState(){
 
 // プロセスの描画
 function OperationProcess(){
-  if(exec.step < todo_array.length){
-    SetData2(process_array[exec.step].Target,process_array[exec.step].New);
+  if(exec.step < anim_process_array.length){
+    SetData2(anim_process_array[exec.step].id,anim_process_array[exec.step].newPosition);
     set_arm();
 
 　　// アームを動かすブロックにセットするために遅延
