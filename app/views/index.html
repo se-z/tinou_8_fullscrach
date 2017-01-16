@@ -1,189 +1,121 @@
 <!DOCTYPE html>
-<html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html  ng-app>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <script src="http://visjs.org/dist/vis.js"></script>
-    <link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="ruleBase.js"></script>
-    <script type="text/javascript" src="function.js"></script>
-    <script type="text/javascript" src="ruleEdit.js"></script>
-    <style type="text/css">
+  <title>kadai8_GUI</title>
+  <meta charset="UTF-8">
+  <!-- 追加部分 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        #mynetwork {
-        width: 1400px;
-        height: 780px;
-        border: 10px solid lightgray;
-        margin: 0 auto;
-        }
+  <link rel="stylesheet" href="css/anim.css" type="text/css">
+  <link rel="stylesheet" href="css/base.css" type="text/css">
 
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/anim.css")">
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/base.css")">
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+  <!-- BootstrapのCSS読み込み -->
+  <link href="css/bootstrap.css" rel="stylesheet">
 
-        #input{
-        width:1200px;
-        height:100px;
-        margin:20px;
-        }
+  <!-- jQuery読み込み -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="@routes.Assets.versioned("javascripts/Plan.js")" type="text/javascript"></script>
+<script src="@routes.Assets.versioned("javascripts/angular.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+  <!-- Angular読み込み -->
+  <script src="javascript/angular.min.js"></script>
 
+  <!-- BootstrapのJS読み込み -->
+  <script src="javascript/bootstrap.min.js"></script>
 
-        #mode{
-        width: 200px;
-        height:100px;
-        margin:20px 50px;
-        }
-
-        #execute{
-        width:200px;
-        height:100px;
-        margin:20px 50px;
-        }
-
-
-        #add{
-        width:100px;
-        height:20px;
-        }
-
-
-        #rules{
-        margin: 0px 0px 0px 20px;
-        }
-
-
-        #ruleName{
-        width:300px;
-        height:20px;
-        }
-
-        #if{
-        width:300px;
-        height:100px;
-        margin:10px 20px;
-        }
-
-
-        #then{
-        width:300px;
-        height:100px;
-        margin:10px 20px;
-        }
-
-        #adapt{
-        width:50px;
-        height:50px;
-        margin:0px 0px 0px 20px;
-        }
-
-        input.rule{
-        width:380px;
-        }
-    </style>
-    <style type="text/css">
-        .boxContainer {
-        display: flex;
-        display: -moz-box;
-        display: -o-box;
-        display: -webkit-box;
-        display: -ms-box;
-        box-orient: horizontal;
-        -moz-box-orient: horizontal;
-        -o-box-orient: horizontal;
-        -webkit-box-orient: horizontal;
-        -ms-box-orient: horizontal;
-        -moz-box-sizing: content-box;
-        }
-    </style>
+  <script type="text/javascript" src="javascript/Plan.js"></script>
 </head>
 
 <body>
-<div class = "boxContainer" id = "ue">
-    <div class = "box">
-        <form name = "as">
-            <textarea name="input" id="input" rows= "5" placeholder="ここにアサーションを入力してください."></textarea>
+  <div id="Anim">
+    <div id="Ground">
+      <!-- <div class="setpanel"  ondragover="_dragover(event)" ondrop="_drop(event)"></div> -->
+    </div>
+  </div>
+
+  <form id="NewBoxArea" name="newbox"><!-- 新規ボックス出力エリア開始 -->
+    <div class="title">NewBox</div>
+    <div id="NewBoxDisplay" name="Display" class="content" ng-model="NewBox">
+      <div id="NewBoxPlace" name="Place"></div>
+    </div>
+  </form><!-- 新規ボックス出力エリア終了 -->
+
+  <form id="DeleteBoxArea" name="deletebox"><!-- ボックス削除エリア開始 -->
+    <div class="title">DeleteBox</div>
+    <div id="DeleteBoxDisplay" name="Display" class="content" ng-model="DeleteBox"></div>
+  </form><!-- ボックス削除エリア終了 -->
+
+  <!-- 実行ボタン -->
+  <input type="button" id="ExecButton" class="btn btn-primary" value="実行" disabled/>
+
+
+<!-- 前Verで使用していたもの -->
+<input type="Button" id="Load" value="読み込み"/><!-- 読み込みボタン -->
+<input type="Button" id="Exec" value="実行" disabled /><!-- 実行ボタン -->
+
+
+
+<div id="MakeBoxArea"><!-- メイクボックスエリア開始 -->
+  <div class="title">MakeBox</div>
+  <div id="MakeBoxTotal" class="content">
+    <div id="MakeBoxLeft">
+      <div id="InputNameArea">
+        <p class="CategoryName bg-primary text-white">Name</p>
+        <form name="BoxName" ng-controller="NameCtrl" novalidate>
+          <div><input type="text" id="MakeNameInput" name="Text" ng-model="boxname" ng-required="true" ng-maxlength="1" ng-pattern="/^[a-zA-Z0-9]*$/" ng-keyup="CheckName()"></div>
+          <div class="ErrorMessage" ng-show="BoxName.Text.$error.required">名前を英数字1文字で入力してください</div>
+          <div class="ErrorMessage" ng-show="BoxName.Text.$error.maxlength">1文字で入力してください</div>
+          <div class="ErrorMessage" ng-show="BoxName.Text.$error.pattern">英数字で入力してください</div>
+          <div class="ErrorMessage" ng-show="samename">既に同じ名前があります</div>
         </form>
+        <input type="button" id="SetBoxNameButton" name="Button" class="btn btn-default btn-lg" value="設定" disabled/>
+      </div>
+      <p class="CategoryName bg-primary text-white">Shape</p>
+      <form name="BoxShape" ng-controller="ShapeCtrl">
+        <input type="radio" id="RadioShape1" name="Radio" ng-model="shape" value="box"> Box
+        <input type="radio" id="RadioShape2" name="Radio" ng-model="shape" value="triangle"> Triangle
+        <input type="radio" id="RadioShape3" name="Radio" ng-model="shape" value="trapezoid"> Trapezoid
+      </form>
+      <p class="CategoryName bg-primary text-white">Color</p>
+      <form name="BoxColor" ng-controller="ColorCtrl">
+        <input type="radio" id="RadioColor1" name="Radio" ng-model="color" value="red">  Red
+        <input type="radio" id="RadioColor2" name="Radio" ng-model="color" value="green"> Green
+        <input type="radio" id="RadioColor3" name="Radio" ng-model="color" value="blue"> Blue
+        <input type="radio" id="RadioColor4" name="Radio" ng-model="color" value="yellow"> Yellow
+      </form>
     </div>
-    <form name = "first">
-        <div class = "box">
-            <input type="button" value="前向き推論" id = "mode" name="mode" onclick = "ChangeMode()"/>
-        </div>
-    </form>
-    <form name = "second">
-        <div class = "box">
-            <input type="button" value="実行" id = "execute" name="execute" />
-        </div>
-    </form>
-</div>
-<!-- https://www.halawata.net/2011/10/css-float-display-box/ -->
-
-
-<div class = "boxContainer">
-    <div class = "box">
-        <input type="hidden" id='direction' value="DU"/>
-        <div id="mynetwork"></div></div>
-    <div class = "box">
-        <!-- http://peacepopo.net/blog-entry-94.html -->
-        <style type="text/css">
-            .box_scrollbar {
-            overflow:scroll;
-            width:400px;
-            height:280px;
-            padding:5px;
-            border:1px solid #000;
-            background-color:#F9F9F9;
-            color:#000;
-            font-size:12px;
-            }
-
-            .box_scrollbar2 {
-            overflow:scroll;
-            width:400px;
-            height:70px;
-            padding:5px;
-            border:1px solid #000;
-            background-color:#F9F9F9;
-            color:#000;
-            font-size:12px;
-            }
-
-            .box_title{
-            border:1px solid #000;
-            padding:5px;
-            width:400px;
-            font-weight:bold;
-            font-size:14px;
-            background-color:#000;
-            color:#fff;
-            }
-        </style>
-        <div class = "box_title" style = "margin: 0px 0px 0px 20px;">ルール一覧 <pre></pre>
-            <input type="button" value="新規追加"  id = "add" name="add" />
-            <input type="button" value="削除"  id = "delete" name="delete" />
-            <select name ="files" id ="rule_files">
-            </select>
-        </div>
-
-        <!--ルール一覧 開始-->
-        <div class = "box_scrollbar" id = "rules">
-        </div><!--ルール一覧 終点-->
-
-        <input type="hidden" id = "rule_id" name="rule_id" value = null /><!-- ルールid を入れる場所 -->
-
-        <font size = "5">&emsp;rule</font><br><!-- rule の文字 -->
-        <input type="text" size="20" id = "ruleName" name="ruleName" /><br><!-- ルール名を入れる場所 -->
-        <font size = "5">&emsp;if</font><br><!-- if の文字 -->
-
-        <div class = "box_scrollbar2" id = "if">
-        </div><!-- if 文一覧 終点-->
-
-        <font size = "5">&emsp;then</font><br>
-        <div class = "box_scrollbar2" id = "then">
-        </div><!-- then 文一覧 終点-->
-        <input type="button" value="適用" id = "apply" name="apply">
-        <input type="button" value="読み込み" id = "load" name="load"/>
-        <input type="button" value="書き込み" id = "btn_write" name="button_write"/>
+    <div id="MakeBoxRight">
+      <p class="CategoryName bg-primary text-white">Weight</p>
+      <form name="BoxWeight" ng-controller="WeightCtrl">
+        Heavy :
+        <input type="checkbox" id="CheckWeight" name="Check" ng-model="weight"><br/>
+      </form>
+      <p class="CategoryName bg-primary text-white">Preview</p>
+      <div id="PreviewBox" class="box" ondragstart="_dragstart(event)" draggable="true">
+        <div id="PreviewName" class="word"><p></p></div>
+      </div>
+      <input type="button" id="AddBoxButton" class="btn btn-success" value="作成" disabled/>
+      <input type="button" id="ChangeBoxButton" class="btn btn-warning" value="変更" disabled/>
     </div>
-</div>
+  </div>
+</div><!-- メイクボックスエリア終了 -->
 
+<form id="TargetStateArea" name="targetstate"><!-- 目標状態入力エリア開始 -->
+  <div class="title">TargetState</div>
+  <textarea id="TargetInput" name="TextArea" class="content" ng-model="TargetState" ng-required="true"></textarea>
+  <div class="ErrorMessage" ng-show="targetstate.TextArea.$error.required">必ず入力してください</div>
+</form><!-- 目標状態入力エリア終了 -->
 
 </body>
-
 </html>
