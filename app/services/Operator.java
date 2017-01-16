@@ -10,9 +10,9 @@ import services.Space;
  * Created by seijihagawa on 2017/01/12.
  */
 public abstract class Operator {
-	private HashMap<String,int[]>mSpaceSize;//座標空間の広さ
-	private Block mBlocks[];
-	private Space mTargetSpace;//目標空間
+	protected HashMap<String,int[]>mSpaceSize;//座標空間の広さ
+	protected Block mBlocks[];
+	protected Space mTargetSpace;//目標空間
 	
 	/**
 	 * 
@@ -37,6 +37,15 @@ public abstract class Operator {
 	 */
 	public void setTargetSpace(Space aSpace){
 		mTargetSpace=aSpace;
+	}
+	
+	/**
+	 * 移動させることが出来るブロックが１つ以上あるならtrue.
+	 * @param aCurrentSpace
+	 * @return
+	 */
+	public boolean canMove(Space aCurrentSpace){
+		
 	}
 	
 	/**
