@@ -3,10 +3,13 @@ package services;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import services.Block;
+import services.Space;
+
 /**
  * Created by seijihagawa on 2017/01/12.
  */
-public class Operator {
+public abstract class Operator {
 	private HashMap<String,int[]>mSpaceSize;//座標空間の広さ
 	private Block mBlocks[];
 	private Space mTargetSpace;//目標空間
@@ -45,16 +48,16 @@ public class Operator {
 	 * @throws CloneNotSupportedException
 	 */
 	public Space[] findPositions(Space aCurrentSpace,ArrayList<String> aSeries,String aRootBlockID) throws CloneNotSupportedException{
-		String aBlockID=decideMovedBlock(aCurrentSpace,aSeries,aRootBlockID);
+		String tBlockID=decideMovedBlock(aCurrentSpace,aSeries,aRootBlockID);
 		
-		if(!aCurrentSpace.isClear(aBlockID))//移動させるブロックの上にブロックが載っている
+		if(!aCurrentSpace.isClear(tBlockID))//移動させるブロックの上にブロックが載っている
 			return new Space[0];
 		
 		//全てのブロックが四角形だと仮定したときにブロックを置くことができる座標のリストを受け取る
 		ArrayList<int[]>tCandidate=aCurrentSpace.searchPositionBePlaced();
 		
 		//移動させるブロックの真上を候補から外す
-		int[] tPosition=aCurrentSpace.getPosition(aBlockID);
+		int[] tPosition=aCurrentSpace.getPosition(tBlockID);
 		removeFromList(tCandidate,tPosition[0],tPosition[1]+1);
 		
 		//移動先の真下が、上に物体を乗せることができないブロックの座標を候補から外す
@@ -66,15 +69,15 @@ public class Operator {
 		}
 		
 		//移動させるブロックが重いブロックなら、移動できない座標を候補から外す
-		if(isHeavy(aBlockID)){
-			removeHighPosition(tCandidate,tPosition[0],tPosition[1]);
+		if(isHeavy(tBlockID)){
+			removeHighPosition(tCandidate,tPosition[0],tPosition[1],aCurrentSpace);
 		}
 		
 		ArrayList<Space> tNewSpaceList=new ArrayList<Space>();
 		//移動後の状態のリストを作成
 		for(int[] tCandidatePosition:tCandidate){
 			Space tNewSpace=aCurrentSpace.cloneSpace();
-			if(tNewSpace.moveBlock(aBlockID, tCandidatePosition[0], tCandidatePosition[1])){
+			if(tNewSpace.moveBlock(tBlockID, tCandidatePosition[0], tCandidatePosition[1])){
 				tNewSpaceList.add(tNewSpace);
 			}
 		}
@@ -91,7 +94,27 @@ public class Operator {
 	 * @return
 	 */
 	public String decideMovedBlock(Space aCurrentSpace,ArrayList<String> aSeries,String aRootBlockID){
+		//目標地点を受け取る
+		int[] tTargetPosition=mTargetSpace.getPosition(aRootBlockID);
 		
+		//目標地点にブロックがあるなら、そのブロックかその上にあるブロック
+		int tHeight=aCurrentSpace.getTop(tTargetPosition[0]);
+		if(tTargetPosition[1]<tHeight){
+			String tBelowBlock=aCurrentSpace.getBlockID(tTargetPosition[0],tHeight-1);//目標地点の最も上にあるブロック
+			if(tBelowBlock!=null){
+				return tBelowBlock;
+			}
+		}
+
+		//副目標に設定されているブロックの上にブロックがあるならそのブロック
+		int[] tNowPosition=aCurrentSpace.getPosition(aRootBlockID);//副目標に設定されているブロックの座標
+		tHeight=aCurrentSpace.getTop(tNowPosition[0]);
+		if(tNowPosition[1]<tHeight-1){
+			return aCurrentSpace.getBlockID(tNowPosition[0],tHeight-1);
+		}
+		
+		//副目標に設定されているブロック
+		return aRootBlockID;
 	}
 	
 	/**
@@ -103,13 +126,35 @@ public class Operator {
 	abstract protected Space[] evaluateSpace(ArrayList<Space> tSpace,String aRootBlockID);
 	
 	/**
-	 * 移動させるブロックが重いブロックのときに、移動できない座標をリストから削除する
+	 * 移動させるブロックが重いブロックのときに、移動できない座標をリストから削除する.
+	 * ブロックの前を通して移動させることができない場合
 	 * @param aList
 	 * @param aX 移動前のx座標
 	 * @param aY 移動前のy座標
 	 */
-	private void removeHighPosition(ArrayList<int[]> aList,int aX,int aY){
-		
+	private void removeHighPosition(ArrayList<int[]> aList,int aX,int aY,Space aCurrentSpace){
+		for(int[] tPosition:aList){
+			int tNowHeight=aY;
+			int tI=1;
+			if(tPosition[0]<aX)
+				tI=-1;
+			for(int tNowX=aX;aX!=tPosition[0];tNowX+=tI){
+				int tNextHeight=aCurrentSpace.getTop(tNowX+tI);//隣の高さ
+				if(tNextHeight>tNowHeight){//隣の座標のほうが高い
+					//穴に落としたブロックを、さらに深い穴に落とす操作を許可するなら、ここに条件を付ければ良いと思う
+					aList.remove(tPosition);
+					break;
+				}
+				String tNextBelowBlock=aCurrentSpace.getBlockID(tNowX+tI,tNextHeight-1);//隣の座標の一番上のブロック
+				if(tNextBelowBlock!=null){
+					if(!canBeOn(tNextBelowBlock)){//隣の座標の一番上のブロックが、上に物体を乗せることが出来ないブロックだった
+						aList.remove(tPosition);
+						break;
+					}
+				}
+				tNowHeight=tNextHeight;
+			}
+		}
 	}
 	
 	/**

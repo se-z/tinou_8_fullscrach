@@ -1,5 +1,7 @@
 package services;
 
+import services.Shape;
+
 
 /**
  * Created by seijihagawa on 2017/01/12.
@@ -15,7 +17,7 @@ public class Block {
 	 * @param aShape 形の名前
 	 * @param aHeavy 重いならtrue
 	 */
-	Block(String aID,String aShape,boolean aHeavy){
+	 Block(String aID,String aShape,boolean aHeavy){
 		mID=aID;
 		mShape=Shape.valueOf(aShape);
 		mHeavy=aHeavy;
