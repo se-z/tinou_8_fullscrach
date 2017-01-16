@@ -157,7 +157,7 @@ class HeatMap{
         if(checkX(a_pos[0],a_origin[0],a_con)){//X座標が条件を満たしていた場合
             for(j = a_origin[1]; j < height && a_origin[1]+j <= height &&a_origin[1]-j  >= -height+1; ++j){//縦にずらす
                 Integer[] new_pos = new Integer[] {a_pos[0],a_origin[1]+j};
-                if(checkY(new_pos[1],a_origin[1],a_con)){
+                if(checkY(new_pos[1],a_origin[1],a_con) && !containPos(new_pos,positionS)){
                     Integer value = countDistance(a_origin,new_pos);
                     positionS.add(new_pos);
                     valueS.add(value);
@@ -165,10 +165,10 @@ class HeatMap{
                 }
                     
                 if(j > 0){//j が1以上なら反転も考慮する
-                    Integer[] pos_yr = new Integer[2];
+                    Integer[] pos_yr = new Integer[2];//反転座標
                     pos_yr[0] = a_pos[0];//X座標はコピー
                     pos_yr[1] = a_origin[1]-j;//Y座標は反転
-                    if(checkY(pos_yr[1],a_origin[1],a_con)){
+                    if(checkY(pos_yr[1],a_origin[1],a_con) && !containPos(pos_yr,positionS)){
                         Integer value = countDistance(a_origin,pos_yr);
                         positionS.add(pos_yr);
                         valueS.add(value);
@@ -241,12 +241,7 @@ class HeatMap{
     }//HeatMapコンストラクタ
 }
 
-/**
- *
- * @author YOSHINO KAI
- */
-public class Target {//目標状態のリストを生成する
-    
+class MapMaker{
     //a_id と同じmIDを持つ Order をリストから取り除く(最初の一個だけ)
     Order removeOrderById(ArrayList<Order> a_orderList,String a_id){
         int count = 0;
@@ -261,7 +256,7 @@ public class Target {//目標状態のリストを生成する
     }
     
     //次の基準となるブロックを選ぶ
-    Order getNextCtrl(ArrayList<Order> a_orderRest,ArrayList<Order> a_orderUsed){
+    static Order getNextCtrl(ArrayList<Order> a_orderRest,ArrayList<Order> a_orderUsed){
         int max=-1;
         Order next = a_orderRest.get(0);
         for(Order rest:a_orderRest){
@@ -282,7 +277,7 @@ public class Target {//目標状態のリストを生成する
     }
     
     //最も左下、基準となるブロックを選ぶ
-    Order getControlPoint(ArrayList<Order> a_orderList){
+    static Order getControlPoint(ArrayList<Order> a_orderList){
         int max = 0;
         Order point = new Order();
         for(Order order:a_orderList){
@@ -296,174 +291,33 @@ public class Target {//目標状態のリストを生成する
         return(point);
     }
     
-    Space makeSpace(ArrayList<Order> a_orderList,Order a_control,ArrayList<Integer> a_space){
-        Order ctrlPoint = a_control;
-        Space space = new Space();
-        space.mBlocks.put(ctrlPoint.mID, new Integer[] {0,0});//基準点を設定
-        int i,init_width=a_space.get(0),init_height = a_space.get(1);
-        for(i = 0; i < init_width ; ++i){
-            space.mSpaceSize.put(i,new Integer[] {0,init_height});//空間を初期化
-        }
-        for(i = 0; i < init_width; ++i){
-            space.mXDepth.put(i,0);//深さを初期化
-        }
-        
-        ArrayList<Order> cloneOrderS = new ArrayList<Order>(a_orderList);//残りのブロックリスト
-        for(i = 0; cloneOrderS.size() > 0; ++i){
-            int max = -1;
-            Order newCtrl = cloneOrderS.get(0);
-            for(Order cOrder : cloneOrderS){//まだ残っている全てのブロックを調べる
-               if(ctrlPoint.contains(cOrder.mID)){//現在の基準ブロックと関連のあるものであった場合
-                   int t_num = cOrder.countConstraint();
-                   if(t_num > max){//制約の多いものを優先する
-                       newCtrl = cOrder;
-                       max = t_num;
-                   }
-               }
-            }
-            
-        }
-        return(space);
-    }
     
-    boolean checkSpace(Space a_space){
-        for(HashMap.Entry<String,Integer[]> block:a_space.mBlocks.entrySet()){
-            if(block.getValue()[1] > 0 && //ブロックが宙に浮いていて
-                   (
-                    ! a_space.mBlocks.containsValue(new Integer[] {block.getValue()[0] ,block.getValue()[1]-1 })
-                    )//その下にブロックがない場合
-                    ){
-                return(false);
-            }
-        }
-        return(true);
-    }
-    
-    boolean containPositon(HashMap<String,Integer[]>blockMap,Integer[] pos){
-         for(HashMap.Entry<String,Integer[]> block:blockMap.entrySet()){
-            if(block.getValue()[0] == pos[0] && block.getValue()[1] == pos[1]){
-                return(true);
-            }
-        }
-        return(false);
-    }
-    
-    ArrayList<Space> getSpace(ArrayList<HeatMap> a_hMapS,ArrayList<Integer> a_spaceSize){
-        ArrayList<Space> spaceS = new ArrayList<Space>();
-        ArrayList<ArrayList<Integer>> usedIndex = new ArrayList<ArrayList<Integer>>();
-        int level,maxLevel = a_hMapS.size(),maxValue = 3,count=0;
-        int[] indexS = new int [maxLevel];
-        for(int index:indexS){
-            index = 0;
-        }
-        
-        while(spaceS.size() < 100){//  
-            Space ans = new Space();
-            for(int i = 0; i < a_spaceSize.get(0);++i){//空間、深さを初期代入
-                ans.mSpaceSize.put(i,new Integer[] {0,a_spaceSize.get(1)} );
-                ans.mXDepth.put(i, 0);
-            }
-            
-            for(level = 0; level < maxLevel;++level){//ヒートマップを先頭から調べる
-                HeatMap map = a_hMapS.get(level);
-                while((map.valueS.get(indexS[level]) > maxValue) || //最大値より大きいものは飛ばす
-                        //ans.mBlocks.containsValue(map.positionS.get(indexS[level]))
-                        containPositon(ans.mBlocks,map.positionS.get(indexS[level]))//既にある座標なら飛ばす
-                        ){
-                    ++indexS[level];
-                    if(indexS[level] >= map.positionS.size()){
-                        break;
-                    }
-                    for(int j=level+1; j < maxLevel;++j){
-                        indexS[j] = 0;//ここより下のヒートマップのインデックスはリセット
-                    }
-                }
-                
-                if(indexS[level] >= map.positionS.size()){
-                    System.out.println("New!");
-                    indexS[level] = 0;
-                    ++indexS[level-1];
-                    break;
-                }
-                else if(level == maxLevel-1){
-                    ++indexS[level];
-                }
-                ans.mBlocks.put(map.mID, map.positionS.get(indexS[level]));
-                Integer height = map.positionS.get(indexS[level])[1];
-                if(height >= 0){
-                     height = 0;
-                 }
-                    
-                int x = map.positionS.get(indexS[level])[0];
-                if(!ans.mXDepth.containsKey(x) ||  -height > ans.mXDepth.get(x)){
-                    ans.mSpaceSize.put(x,new Integer[] {0+height,a_spaceSize.get(1)} );
-                    ans.mXDepth.put(x, -height);
-                }
-                //};
-                 for(int index:indexS){
-                    System.out.print(index+",");
-                }
-                System.out.println(" level="+level);
-                
-        }//for(HeatMap map:a_hMapS)
-            ans.show();
-        if(checkSpace(ans)){
-            spaceS.add(ans);
-            System.out.print("indexS=");
-            for(int index:indexS){
-                System.out.print(index+",");
-            }
-            System.out.println("");         
-        }
-    }//while(count < 100)
-    System.out.println("Finish!"+spaceS.size());
-    return(spaceS);
-}
-    
-    ArrayList<Space> getTagetList(){
-        ArrayList<Integer> space = new ArrayList<Integer>();
-        ArrayList<Block> blockList = new ArrayList<Block>();
-        ArrayList<String> orderInputS = new ArrayList<String>();
-        Converter conv = new Converter();
-        space =  conv.getSpace2();
-        System.out.println("space="+space);
-        ArrayList<String> objList = conv.getExObjList();
-        int i;
-        /*
-        i = 0;
-        for(String obj:objList){
-            System.out.println("obj"+ i +" = " + obj);
-            ++i;
-        }
-        //*/
-        ArrayList<Order> orderList = conv.getExOrdeListr(objList);
-        //System.out.println(getControlPoint(orderList).mID);
-        Order ctrl = getControlPoint(orderList);
-        ArrayList<String>register = new ArrayList<String>();
-        ArrayList<Space> answerList = new ArrayList<Space>();
-        
-        int blockNum = objList.size();   
+    public static ArrayList<HeatMap> makeMap1(ArrayList<Order> a_orderList,int a_blockNum,int width,int height){
+        ArrayList<HeatMap> heatMapS = new ArrayList<HeatMap>();
+        Target tgt = new Target();
+        Order ctrl = getControlPoint(a_orderList);//基準点を求める  
         Order lastCtrl = new Order();
         ArrayList<Order> usedOrderS = new ArrayList<Order>();//ヒートマップが作られたOrderリスト
-        ArrayList<Order> restOrderS = new ArrayList<Order>(orderList);//残りのOrderリスト          
-        ArrayList<HeatMap> heatMapS  = new ArrayList<HeatMap>();//ヒートマップリスト
-        HeatMap map = new HeatMap(ctrl.mID,space.get(1));
-        while(heatMapS.size() < blockNum){
-           map.show();
-           heatMapS.add(map);
+        ArrayList<Order> restOrderS = new ArrayList<Order>(a_orderList);//残りのOrderリスト          
+        HeatMap map = new HeatMap(ctrl.mID,height);//始まりのヒートマップを作製
+        while(heatMapS.size() < a_blockNum){
+           //map.show();//マップを表示する
+           heatMapS.add(map);//マップを追加する
            lastCtrl = new Order(ctrl);
            usedOrderS.add(ctrl);
            restOrderS.remove(ctrl);
-           if(restOrderS.size() > 0){
+           if(restOrderS.size() > 0){//残っているブロックがあれば更新
                ctrl = getNextCtrl(restOrderS,usedOrderS);//基準点を更新
                Constraint new_con = new Constraint(ctrl.mID,map.getMinPosition(),lastCtrl);//制約を作る
-               map = new HeatMap(ctrl.mID,space.get(0),space.get(1),map.getMinPosition(),new_con);
-               //System.out.println("Newed!");
+               map = new HeatMap(ctrl.mID,width,height,map.getMinPosition(),new_con);
             }
         }
-        
-        ArrayList<Space> ansList = getSpace(heatMapS,space);
-        
+        return(heatMapS);
+    }
+    
+    public static ArrayList<HeatMap> makeMap2(ArrayList<Order> a_orderList,int a_blockNum,int width,int height){
+        ArrayList<HeatMap> heatMapS = new ArrayList<HeatMap>();
+        Target tgt = new Target();
         /*
         for(i = 0; i < start.length; ++i){
             boolean first = true;
@@ -519,7 +373,179 @@ public class Target {//目標状態のリストを生成する
             
         }//for(i = 0; i < start.length; ++i)
         //*/
+        return(heatMapS);
+    }
+}
+/**
+ *
+ * @author YOSHINO KAI
+ */
+public class Target {//目標状態のリストを生成する
+    
+    //使われず
+    Space makeSpace(ArrayList<Order> a_orderList,Order a_control,ArrayList<Integer> a_space){
+        Order ctrlPoint = a_control;
+        Space space = new Space();
+        space.mBlocks.put(ctrlPoint.mID, new Integer[] {0,0});//基準点を設定
+        int i,init_width=a_space.get(0),init_height = a_space.get(1);
+        for(i = 0; i < init_width ; ++i){
+            space.mSpaceSize.put(i,new Integer[] {0,init_height});//空間を初期化
+        }
+        for(i = 0; i < init_width; ++i){
+            space.mXDepth.put(i,0);//深さを初期化
+        }
         
+        ArrayList<Order> cloneOrderS = new ArrayList<Order>(a_orderList);//残りのブロックリスト
+        for(i = 0; cloneOrderS.size() > 0; ++i){
+            int max = -1;
+            Order newCtrl = cloneOrderS.get(0);
+            for(Order cOrder : cloneOrderS){//まだ残っている全てのブロックを調べる
+               if(ctrlPoint.contains(cOrder.mID)){//現在の基準ブロックと関連のあるものであった場合
+                   int t_num = cOrder.countConstraint();
+                   if(t_num > max){//制約の多いものを優先する
+                       newCtrl = cOrder;
+                       max = t_num;
+                   }
+               }
+            }
+            
+        }
+        return(space);
+    }
+    
+    boolean checkSpace(Space a_space){
+        for(HashMap.Entry<String,Integer[]> block:a_space.mBlocks.entrySet()){
+            if(block.getValue()[1] > 0 && //ブロックが宙に浮いていて
+                   (
+                    ! a_space.mBlocks.containsValue(new Integer[] {block.getValue()[0] ,block.getValue()[1]-1 })
+                    )//その下にブロックがない場合
+                    ){
+                return(false);
+            }
+        }
+        return(true);
+    }
+    
+    boolean containPositon(HashMap<String,Integer[]>blockMap,Integer[] pos){
+         for(HashMap.Entry<String,Integer[]> block:blockMap.entrySet()){
+            if(block.getValue()[0] == pos[0] && block.getValue()[1] == pos[1]){
+                return(true);
+            }
+        }
+        return(false);
+    }
+    
+    ArrayList<Space> getSpace(ArrayList<HeatMap> a_hMapS,ArrayList<Integer> a_spaceSize){
+        ArrayList<Space> spaceS = new ArrayList<Space>();
+        ArrayList<ArrayList<Integer>> usedIndex = new ArrayList<ArrayList<Integer>>();
+        int level,maxLevel = a_hMapS.size(),maxValue = 3,maxSpace = 100;
+        boolean end = false;
+        int[] indexS = new int [maxLevel];
+        for(int index:indexS){
+            index = 0;
+        }
+        
+        while(spaceS.size() < maxSpace){//maxSpace個まで解を求める  
+            Space ans = new Space();
+            for(int i = 0; i < a_spaceSize.get(0);++i){//空間、深さを初期代入
+                ans.mSpaceSize.put(i,new Integer[] {0,a_spaceSize.get(1)} );
+                ans.mXDepth.put(i, 0);
+            }
+            
+            for(level = 0; level < maxLevel;++level){//ヒートマップを先頭から調べる
+                HeatMap map = a_hMapS.get(level);//現在のヒートマップを取り出す
+                while((map.valueS.get(indexS[level]) > maxValue) || //最大値より大きいものは飛ばす
+                        //ans.mBlocks.containsValue(map.positionS.get(indexS[level]))
+                        containPositon(ans.mBlocks,map.positionS.get(indexS[level]))//既にある座標なら飛ばす
+                        ){
+                    ++indexS[level];
+                    if(indexS[level] >= map.positionS.size()){
+                        break;
+                    }
+                    for(int j=level+1; j < maxLevel;++j){
+                        indexS[j] = 0;//ここより下のヒートマップのインデックスはリセット
+                    }
+                }
+                
+                if(indexS[level] >= map.positionS.size()){
+                    System.out.println("New!");
+                    if(level == 0){//一番上のヒートマップの限界に達した　すなわち条件を満たす解を全て求めた場合
+                        end = true;
+                    }
+                    else{
+                        indexS[level] = 0;
+                        ++indexS[level-1];
+                    }
+                    break;
+                }
+                
+                ans.mBlocks.put(map.mID, map.positionS.get(indexS[level]));
+                Integer height = map.positionS.get(indexS[level])[1];
+                if(height >= 0){
+                     height = 0;
+                 }
+                    
+                int x = map.positionS.get(indexS[level])[0];
+                if(!ans.mXDepth.containsKey(x) ||  -height > ans.mXDepth.get(x)){
+                    ans.mSpaceSize.put(x,new Integer[] {0+height,a_spaceSize.get(1)} );
+                    ans.mXDepth.put(x, -height);
+                }
+                /*
+                 for(int index:indexS){
+                    System.out.print(index+",");
+                }
+                System.out.println(" level="+level);
+                //*/
+        }//for(HeatMap map:a_hMapS)
+            
+        if(end){
+            break;
+        }
+        ++indexS[level-1];
+        if(checkSpace(ans)&& level == maxLevel){
+            spaceS.add(ans);
+            ans.show();
+            System.out.print("indexS=");
+            for(int index:indexS){
+                System.out.print(index+",");
+            }
+            System.out.println("");         
+        }
+    }//while(count < 100)
+    System.out.println("Finish!"+spaceS.size());
+    return(spaceS);
+}
+    
+    ArrayList<Space> getTagetList(){
+        ArrayList<Integer> space = new ArrayList<Integer>();
+        Converter conv = new Converter();
+        space =  conv.getSpace2();
+        ArrayList<String> objList = conv.getExObjList();
+        ArrayList<Order> orderList = conv.getExOrdeListr(objList);
+        ArrayList<HeatMap> heatMapS  = new ArrayList<HeatMap>();//ヒートマップリスト
+        /*
+        Order ctrl = getControlPoint(orderList);
+        int blockNum = objList.size();   
+        Order lastCtrl = new Order();
+        ArrayList<Order> usedOrderS = new ArrayList<Order>();//ヒートマップが作られたOrderリスト
+        ArrayList<Order> restOrderS = new ArrayList<Order>(orderList);//残りのOrderリスト          
+        HeatMap map = new HeatMap(ctrl.mID,space.get(1));
+        while(heatMapS.size() < blockNum){
+           map.show();
+           heatMapS.add(map);
+           lastCtrl = new Order(ctrl);
+           usedOrderS.add(ctrl);
+           restOrderS.remove(ctrl);
+           if(restOrderS.size() > 0){
+               ctrl = getNextCtrl(restOrderS,usedOrderS);//基準点を更新
+               Constraint new_con = new Constraint(ctrl.mID,map.getMinPosition(),lastCtrl);//制約を作る
+               map = new HeatMap(ctrl.mID,space.get(0),space.get(1),map.getMinPosition(),new_con);
+            }
+        }
+        //*/
+        heatMapS = MapMaker.makeMap1(orderList, objList.size(), space.get(0), space.get(1));//ヒートマップのリストを作る
+        ArrayList<Space> answerList = getSpace(heatMapS,space);//ヒートマップから解候補のリストを作る
+                
         return(answerList);
     }
     

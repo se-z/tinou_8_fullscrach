@@ -27,7 +27,7 @@ public class Order {//ブロック間の順序を表すデータ構造
         mYEqual = new ArrayList<String>();
     }
     
-    public Order(Order original){
+    public Order(Order original){//コンストラクタ　コピー
         mXLessThan = new ArrayList<String>(original.mXLessThan);
         mXGreaterThan = new ArrayList<String>(original.mXGreaterThan);
         mYLessThan = new ArrayList<String>(original.mYLessThan);
