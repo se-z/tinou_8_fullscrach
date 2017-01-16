@@ -266,7 +266,7 @@ function onExecButton(){
   if(exec.step == 0){
     //make_ObjFile2();　// 送信データを作成
     //get_process_data2();//過程データを読み込む
-    //make_hole();
+    make_hole();
     init_Animation();
   }
   anim_start_ary = new Array(todo_array.length);
@@ -305,7 +305,7 @@ $('#ExecButton').on('click', function () {
       cache: false,
       async: false,       //warningが出るが、ここをfalseにしないと正しく挙動しない
       data: JSONdata,
-    }).done(function (data）
+    }).done(function (data)
       process_array = data;
       onExecButton();
       //insertItems(data);
@@ -313,11 +313,82 @@ $('#ExecButton').on('click', function () {
       console.log('FAIL!');
     }).always(function () {
     });
+});
 
-//過程データを読み込む
-function get_process_data2(){
 
+
+function make_hole(){
+  var count_hole = 1;
+  var hole_mem = new Array();
+  //hole_mem.push([0,0]);
+  for(var i=0;i<process_array.length;i++){
+    var hole_exist = false;
+    var hole_exist2 = false;
+    if(process_array[i].newPosition[1] == -2){
+      var hole_depth1 = {newPosition:[process_array[i].newPosition[0],-1]};
+      for(var j=0;j<hole_mem.length;j++){
+        if(process_array[i].newPosition[0]==hole_mem[j][0]&&process_array[i].newPosition[1]==hole_mem[j][1]){
+          hole_exist = true;
+        }
+        if(hole_depth1.newPosition[0] == hole_mem[j][0]&&hole_depth1.newPosition[1] == hole_mem[j][1]){
+          hole_exist2 = true;
+        }
+      }
+      if(hole_exist==false&&hole_exist2==false){
+        var hole = {id:"hole"+String(count_hole),newPosition:[process_array[i].newPosition[0],-1]};
+        hole_mem.push([process_array[i].newPosition[0],-1]);
+        anim_process_array.push(hole);
+        count_hole++;
+        var anim_temp = {id:process_array[i].id,newPosition:process_array[i].newPosition};
+        var hole = {id:"hole"+String(count_hole),newPosition:process_array[i].newPosition};
+        hole_mem.push(process_array[i].newPosition);
+        anim_process_array.push(hole);
+        anim_process_array.push(anim_temp);
+        count_hole++;
+      }else if(hole_exist2 == true&&hole_exist == false){
+        var hole = {id:"hole"+String(count_hole),newPosition:process_array[i].newPosition};
+        count_hole++;
+        var anim_temp = {id:process_array[i].id,newPosition:process_array[i].newPosition};
+        hole_mem.push(process_array[i].newPosition);
+        anim_process_array.push(hole);
+        anim_process_array.push(anim_temp);
+      }else{
+        var anim_temp = {id:process_array[i].id,newPosition:process_array[i].newPosition};
+        anim_process_array.push(anim_temp);
+      }
+      hole_exist=false;
+      hole_exist2=false;
+
+    }else if(process_array[i].newPosition[1] == -1){
+      for(var j=0;j<hole_mem.length;j++){
+        if(process_array[i].newPosition[0]==hole_mem[j][0]&&process_array[i].newPosition[1]==hole_mem[j][1]){
+          hole_exist=true;
+        }
+      }
+      if(hole_exist == false){
+        var hole = {id:"hole"+String(count_hole),newPosition:process_array[i].newPosition};
+        count_hole++;
+        hole_mem.push(process_array[i].newPosition);
+        anim_process_array.push(hole);
+      }
+      var anim_temp = {id:process_array[i].id,newPosition:process_array[i].newPosition};
+      anim_process_array.push(anim_temp);
+      hole_exist = false;
+    }else{
+      var anim_temp  = {id:process_array[i].id,newPosition:process_array[i].newPosition};
+      //anim_process_array[anim_length].id = process_array[i].id;
+      //anim_process_array[anim_length].newPosition = process_array[i].newPosition;
+      anim_process_array.push(anim_temp);
+    }
+  }
+  console.log(hole_mem);
+  console.log(anim_process_array);
 }
+
+
+
+
+
 
 //描画イベント 実行ボタン対応
 function execEvents(){
