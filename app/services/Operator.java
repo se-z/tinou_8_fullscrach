@@ -3,9 +3,6 @@ package services;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import services.Block;
-import services.Space;
-
 /**
  * Created by seijihagawa on 2017/01/12.
  */
@@ -60,20 +57,24 @@ public abstract class Operator {
      */
     public Space[] findPositions(Space aCurrentSpace, ArrayList<String> aSeries, String aRootBlockID) throws CloneNotSupportedException {
         String tBlockID = decideMovedBlock(aCurrentSpace, aSeries, aRootBlockID);
-
-        if (!aCurrentSpace.isClear(tBlockID))//移動させるブロックの上にブロックが載っている
+    	
+        if (aCurrentSpace.isClear(tBlockID))//移動させるブロックの上にブロックが載っている
             return new Space[0];
 
         //全てのブロックが四角形だと仮定したときにブロックを置くことができる座標のリストを受け取る
         ArrayList<int[]> tCandidate = aCurrentSpace.searchPositionBePlaced();
+        ArrayList<int[]> tCandidateCopy=new ArrayList<int[]>();
 
         //移動させるブロックの真上を候補から外す
         int[] tPosition = aCurrentSpace.getPosition(tBlockID);
         removeFromList(tCandidate, tPosition[0], tPosition[1] + 1);
 
+        copyList(tCandidate,tCandidateCopy);
         //移動先の真下が、上に物体を乗せることができないブロックの座標を候補から外す
-        for (int[] tBelowPosition : tCandidate) {
+        for (int[] tBelowPosition : tCandidateCopy) {
             String tBelowBlock = aCurrentSpace.getBlockID(tBelowPosition[0], tBelowPosition[1] - 1);
+            if(tBelowBlock==null)
+            	break;
             if (!canBeOn(tBelowBlock)) {
                 removeFromList(tCandidate, tBelowPosition[0], tBelowPosition[1]);
             }
@@ -146,23 +147,34 @@ public abstract class Operator {
      * @param aX    移動前のx座標
      * @param aY    移動前のy座標
      */
-    private void removeHighPosition(ArrayList<int[]> aList, int aX, int aY, Space aCurrentSpace) {
-        for (int[] tPosition : aList) {
+    public void removeHighPosition(ArrayList<int[]> aList, int aX, int aY, Space aCurrentSpace) {
+    	int tTargetHeight=mTargetSpace.getPosition(aCurrentSpace.getBlockID(aX, aY))[1];//移動させるブロックの目標状態での高さ
+    	ArrayList<int[]> tCopy=new ArrayList<int[]>();
+    	copyList(aList,tCopy);
+        for (int[] tPosition : tCopy) {
+        	if(tPosition[1]<tTargetHeight){//候補の座標が目標状態での高さより低い
+        		removeFromList(aList,tPosition[0],tPosition[1]);
+        		continue;
+        	}
             int tNowHeight = aY;
             int tI = 1;
             if (tPosition[0] < aX)
                 tI = -1;
-            for (int tNowX = aX; aX != tPosition[0]; tNowX += tI) {
+            for (int tNowX = aX; tNowX != tPosition[0]; tNowX += tI) {
                 int tNextHeight = aCurrentSpace.getTop(tNowX + tI);//隣の高さ
+                if(tNextHeight<tTargetHeight){//隣の座標が目標状態での高さより低い
+                	removeFromList(aList,tPosition[0],tPosition[1]);
+                	break;
+                }
                 if (tNextHeight > tNowHeight) {//隣の座標のほうが高い
                     //穴に落としたブロックを、さらに深い穴に落とす操作を許可するなら、ここに条件を付ければ良いと思う
-                    aList.remove(tPosition);
+                	removeFromList(aList,tPosition[0],tPosition[1]);
                     break;
                 }
                 String tNextBelowBlock = aCurrentSpace.getBlockID(tNowX + tI, tNextHeight - 1);//隣の座標の一番上のブロック
                 if (tNextBelowBlock != null) {
                     if (!canBeOn(tNextBelowBlock)) {//隣の座標の一番上のブロックが、上に物体を乗せることが出来ないブロックだった
-                        aList.remove(tPosition);
+                    	removeFromList(aList,tPosition[0],tPosition[1]);
                         break;
                     }
                 }
@@ -185,6 +197,22 @@ public abstract class Operator {
                 return;
             }
         }
+    }
+    
+    /**
+     * リストをコピーする
+     * @param aList1 コピーするリスト
+     * @param aList2 コピー先のリスト
+     */
+    private void copyList(ArrayList<int[]> aList1,ArrayList<int[]> aList2){
+    	aList2.clear();
+    	for(int[] tPosition:aList1){
+    		int[] tCpPosition=new int[2];
+    		tCpPosition[0]=tPosition[0];
+    		tCpPosition[1]=tPosition[1];
+    		
+    		aList2.add(tCpPosition);
+    	}
     }
 
     /**
