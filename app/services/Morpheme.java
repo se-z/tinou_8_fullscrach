@@ -1,42 +1,34 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- *
- * @author YOSHINO KAI
- */
 package services;
+
 import java.io.*;
 import java.util.*;
 
 public class Morpheme {
-	// 表層形
+    // 表層形
     String surface;
 
     // 品詞文字列
     String posStr;
-    
+
     // 品詞階層
     String[] pos;
-    
+
     // 活用形
     String conjForm;
-    
+
     // 活用型
     String conjType;
-    
+
     // 原形
     String base;
-    
+
     // 読み
     String reading;
-    
+
     // 発音
     String pron;
-    
+
     /**
      * mainメソッド
      */
@@ -47,26 +39,26 @@ public class Morpheme {
         // 文字列を形態素解析
         ArrayList<Morpheme> morphs = analyzeMorpheme("ここではきものを脱いで下さい");
         System.out.println(morphs);
-    
+
         for (int i = 0; i < morphs.size(); i++) {//morphsの中を全て調べる
             // 形態素を1つずつmorphに格納するループ
             Morpheme morph = morphs.get(i);
-			    
+
             // 表層の文字列を取り出すには，getSurfaceメソッド
             String surface = morph.getSurface();
             System.out.println("表層の文字列: " + surface);
-            
+
             // 動詞か否かチェック
             if (morph.isVerb()) {
                 System.out.println("  動詞です");
             }
-            
-            
+
+
             // 名詞か否かチェック
             if (morph.isNoun()) {
                 System.out.println("  名詞です");
             }
-            
+
             // 品詞（第i+1階層）を取り出すには，getPos(i)
             String pos1 = morph.getPos(0);
             System.out.println("　品詞第一階層: " + pos1);
@@ -83,8 +75,8 @@ public class Morpheme {
         }
     }
 
-    
-    String mecabLine;    
+
+    String mecabLine;
     static Process mecabPrc;
     static PrintWriter mecabOut;
     static BufferedReader mecabIn;
@@ -93,10 +85,10 @@ public class Morpheme {
     //static String encoding = "EUC-JP";
     //static String encoding = "UTF-8";//うまくいくが文字化けする
     static String encoding = "Shift_JIS";//完璧
-    
+
     /**
      * コンストラクタ
-     */ 
+     */
     public Morpheme(String line) {
         mecabLine = line;
         String[] arr = line.split("\t");
@@ -127,28 +119,28 @@ public class Morpheme {
     /**
      * 形態素解析の結果をMorphemeオブジェクトのリストにして返す
      */
-     static ArrayList<Morpheme> analyzeMorpheme(String str) {
+    static ArrayList<Morpheme> analyzeMorpheme(String str) {
         if (mecabPrc == null) {
             startMeCab();
         }
-     
+
         mecabOut.println(str);    // MeCabに文字列を送る
         mecabOut.flush();
         ArrayList<Morpheme> morphs = new ArrayList<Morpheme>();
         try {
-            for (String line = mecabIn.readLine(); line != null; line = mecabIn.readLine())  {
+            for (String line = mecabIn.readLine(); line != null; line = mecabIn.readLine()) {
                 // mecabから結果を受け取る
                 if (line.equals("EOS")) {
                     break;
                 } else {
                     morphs.add(new Morpheme(line));
                 }
-             }
+            }
         } catch (IOException e) {
-             System.err.println("MeCabから形態素解析結果を受け取る際にIOExceptionが発生しました");
-             e.printStackTrace();
+            System.err.println("MeCabから形態素解析結果を受け取る際にIOExceptionが発生しました");
+            e.printStackTrace();
         }
-        
+
         return morphs;
     }
 
@@ -186,27 +178,27 @@ public class Morpheme {
     public String getPos() {
         return pos[0];
     }
-    
+
     /**
      * この形態素の品詞第(i+1)階層を返す
      */
     public String getPos(int i) {
         return pos[i];
     }
-    
+
     /**
      * この形態素の品詞に品詞strが含まれているかを返す
      */
-    public boolean contain(String str){
-    	for(int i = 0; i < pos.length ; ++i){
-    		if(pos[i].equals(str)){
-    			return(true);
-    		}
-    	}
-    	
-    	return(false);
+    public boolean contain(String str) {
+        for (int i = 0; i < pos.length; ++i) {
+            if (pos[i].equals(str)) {
+                return (true);
+            }
+        }
+
+        return (false);
     }
-    
+
     /**
      * この形態素の活用形を返す
      */
@@ -220,8 +212,8 @@ public class Morpheme {
     public String getConjugationType() {
         return conjType;
     }
-    
-    
+
+
     /**
      * この形態素の原形を返す
      */
@@ -235,39 +227,38 @@ public class Morpheme {
     public String getPronunciation() {
         return pron;
     }
-    
+
     /**
      * この形態素が動詞ならtrue（真）を返し，そうでなければfalse（偽）を返す
      */
     public boolean isVerb() {
         return pos[0].equals("動詞");
     }
-    
+
     /**
      * この形態素が名詞ならtrue（真）を返し，そうでなければfalse（偽）を返す
      */
     public boolean isNoun() {
         return pos[0].equals("名詞");
     }
-    
+
     /**
      * この形態素が形容詞ならtrue（真）を返し，そうでなければfalse（偽）を返す 自作
      */
     public boolean isAdjective() {
         return pos[0].equals("形容詞");
     }
-    
+
     /**
      * この形態素の情報を文字列にして返す
      */
     public String toString() {
         return "<形態素 表層=\"" + surface + "\"" +
-               " 品詞=\"" + posStr + "\"" +
-               " 活用形=\"" + conjForm + "\"" +
-               " 活用型=\"" + conjType + "\"" +
-               " 原形=\"" + base + "\"" +
-               " 読み=\"" + reading + "\"" +
-               " 発音=\"" + pron + "\" />";
+                " 品詞=\"" + posStr + "\"" +
+                " 活用形=\"" + conjForm + "\"" +
+                " 活用型=\"" + conjType + "\"" +
+                " 原形=\"" + base + "\"" +
+                " 読み=\"" + reading + "\"" +
+                " 発音=\"" + pron + "\" />";
     }
 }
-
