@@ -7,7 +7,7 @@ import java.util.Iterator;
 /**
  * Created by seijihagawa on 2017/01/12.
  */
-public class Space implements Cloneable{ //clone()を使うためのimplements
+public class Space {
 	private HashMap<String,Position> mBlocks;//ブロックの座標
 	private HashMap<String,int[]> mSpaceSize;//座標空間の広さ
 	private HashMap<Integer,Integer> mXDepth;//穴の位置と深さ
@@ -309,11 +309,27 @@ public class Space implements Cloneable{ //clone()を使うためのimplements
 	/**
 	 * 現在の状態を複製して返す.
 	 * @return
-	 * @throws CloneNotSupportedException
 	 */
-	public Space cloneSpace() throws CloneNotSupportedException{
-		Space tNewSpace=null;
-		tNewSpace=(Space)super.clone();
-		return tNewSpace;
+	public Space cloneSpace() {
+		int[] tXRange=mSpaceSize.get("x");
+		int[] tYRange=mSpaceSize.get("y");
+		Space tReturned=new Space(tXRange[0],tXRange[1],tYRange[0],tYRange[1]);
+		for(String tID:mBlocks.keySet()){
+			Position tPosition=mBlocks.get(tID);
+			Position tCPPosition=new Position(tPosition.getX(),tPosition.getY());
+			tReturned.mBlocks.put(tID, tCPPosition);
+		}
+		for(Integer tX:mXDepth.keySet()){
+			Integer tY=mXDepth.get(tX);
+			tReturned.mXDepth.put(tX, tY);
+		}
+		for(String tID:mFixedBlocks){
+			String tBlock=tID;
+			tReturned.mFixedBlocks.add(tBlock);
+		}
+		for(String tID:mUpwardFlag.keySet()){
+			tReturned.mUpwardFlag.put(tID, mUpwardFlag.get(tID));
+		}
+		return tReturned;
 	}
 }
