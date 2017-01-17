@@ -44,11 +44,11 @@ public class Goals {
         mSeriesNumber = 0;
     }
 
-    public String getCurrentID() {
+    public String getCurrentTarget() {
         return mCurrentID;
     }
 
-    public void setNextID(){
+    public void setNextTarget(){
         mNumberInLine++;
         int tNumber = mSeriesInteger.get(mSeriesNumber).get(mNumberInLine);
         mCurrentID = mIDMap.get(tNumber);
@@ -72,9 +72,9 @@ public class Goals {
      * @return
      * いるかどうかわからんけど一応。
      */
-    public String getNextID(){
-        setNextID();
-        return getCurrentID();
+    public String getNextTarget(){
+        setNextTarget();
+        return getCurrentTarget();
     }
 
 
