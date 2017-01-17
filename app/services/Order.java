@@ -36,6 +36,16 @@ public class Order {//ブロック間の順序を表すデータ構造
         mYEqual = new ArrayList<String>(original.mYEqual);
     }
     
+    void show(){
+        System.out.print("ID="+mID+" ");
+        System.out.print(mXGreaterThan);
+        System.out.print(mXLessThan);
+        System.out.print(mYGreaterThan);
+        System.out.print(mYLessThan);
+        System.out.print(mXEqual);
+        System.out.println(mYEqual);
+    }
+    
     //基準点へのふさわしさ
     int countCtrl(){
          int count = mXGreaterThan.size()*(-1)+ mXLessThan.size()*2+

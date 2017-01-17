@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -242,7 +243,7 @@ class HeatMap{
 }
 
 class MapMaker{
-    //a_id と同じmIDを持つ Order をリストから取り除く(最初の一個だけ)
+    //a_id と同じmIDを持つ Order をリストから取り除く(最初の一個だけ) 使われず
     Order removeOrderById(ArrayList<Order> a_orderList,String a_id){
         int count = 0;
         for(Order a_order:a_orderList){
@@ -291,10 +292,8 @@ class MapMaker{
         return(point);
     }
     
-    
     public static ArrayList<HeatMap> makeMap1(ArrayList<Order> a_orderList,int a_blockNum,int width,int height){
         ArrayList<HeatMap> heatMapS = new ArrayList<HeatMap>();
-        Target tgt = new Target();
         Order ctrl = getControlPoint(a_orderList);//基準点を求める  
         Order lastCtrl = new Order();
         ArrayList<Order> usedOrderS = new ArrayList<Order>();//ヒートマップが作られたOrderリスト
@@ -376,6 +375,34 @@ class MapMaker{
         return(heatMapS);
     }
 }
+
+class Place{//オブジェクトの目標状態
+    String name;//名前
+    Integer[] coordinate;//座標
+    ArrayList<String> Upper;//Y座標がこれより大きいもの
+    ArrayList<String> Lower;//Y座標がこれより小さいもの
+    ArrayList<String> Equal;//Y座標がこれと等しいもの
+    void show(){
+        System.out.println("Name="+name+"["+coordinate[0]+","+coordinate[1]+"]"+Upper+" "+Lower+" "+Equal);
+    }
+    
+    public Place(String a_name){//コンストラクタ
+        name = a_name;
+        coordinate = new Integer[2];
+        Upper = new ArrayList<String>();
+        Lower = new ArrayList<String>();
+        Equal = new ArrayList<String>();
+    }
+    
+    public Place(Place a_origin){
+        name = new String(a_origin.name);
+        coordinate = new Integer[] {a_origin.coordinate[0],a_origin.coordinate[1]};
+        Upper = new ArrayList<String>(a_origin.Upper);
+        Lower = new ArrayList<String>(a_origin.Lower);
+        Equal = new ArrayList<String>(a_origin.Equal);
+    }
+}
+
 /**
  *
  * @author YOSHINO KAI
@@ -429,6 +456,15 @@ public class Target {//目標状態のリストを生成する
     boolean containPositon(HashMap<String,Integer[]>blockMap,Integer[] pos){
          for(HashMap.Entry<String,Integer[]> block:blockMap.entrySet()){
             if(block.getValue()[0] == pos[0] && block.getValue()[1] == pos[1]){
+                return(true);
+            }
+        }
+        return(false);
+    }
+    
+    boolean containPoint(ArrayList<Integer[]> a_List,Integer[] a_pos){
+        for(Integer[] ele:a_List){
+            if(ele[0] == a_pos[0] && ele[1] == a_pos[1]){
                 return(true);
             }
         }
@@ -516,7 +552,255 @@ public class Target {//目標状態のリストを生成する
     return(spaceS);
 }
     
-    ArrayList<Space> getTagetList(){
+    //width,height は今は考慮しない
+    Integer[] setPoint(Integer[] a_ctrlPoint,String a_currentName,Order a_ctrl,ArrayList<Integer[]> a_usedPointS){
+        Integer[] newPoint = new Integer[] {a_ctrlPoint[0],a_ctrlPoint[1]};//座標をコピー
+        
+        if(a_currentName.equals(a_ctrl.mID)){//基準点と今調べている点が同一のものであった場合
+            return(newPoint);//そのまま返す
+        }
+        
+        if(!a_ctrl.mXEqual.contains(a_currentName)){//X座標が同じでなくても問題ない場合
+            if(a_ctrl.mXGreaterThan.contains(a_currentName)){//基準点より左の点であった場合                
+                while(containPoint(a_usedPointS,newPoint)){
+                    --newPoint[0];
+                    /*
+                    if(newPoint[0] < 0 ){//左に行き過ぎた場合
+                        ++newPoint[1];上げる
+                        newPoint[0] = a_ctrlPoint[0];//基準を戻す
+                    }
+                    //*/
+                }
+            }
+            else if(a_ctrl.mXLessThan.contains(a_currentName)){
+                while(containPoint(a_usedPointS,newPoint)){
+                    ++newPoint[0];
+                    /*
+                    if(newPoint[0] > width ){//右に行き過ぎた場合
+                        ++newPoint[1];上げる
+                        newPoint[0] = a_ctrlPoint[0];//基準を戻す
+                    }
+                    //*/
+                }
+            }
+        }
+        
+        if(!a_ctrl.mYEqual.contains(a_currentName)){//Y座標が同じでなくても問題ない場合
+            if(a_ctrl.mYGreaterThan.contains(a_currentName)){//基準点より下の点であった場合                
+                while(containPoint(a_usedPointS,newPoint)){
+                    --newPoint[1];
+                }
+            }
+            else if(a_ctrl.mYLessThan.contains(a_currentName)){
+                while(containPoint(a_usedPointS,newPoint)){
+                    ++newPoint[1];
+                }
+            }
+        }
+        
+        
+        while(containPoint(a_usedPointS,newPoint)){//まだ既存の点と被っている場合
+            ++newPoint[0];//右にずらす
+        }
+        
+        return(newPoint);
+    }
+    
+    //次に扱う点を調べる 基準点ではない
+    Order getNextOrder(Order a_ctrl,ArrayList<String> a_usedBlockS,ArrayList<Order> a_orderS){
+        int max = -1;
+        Order next = null;
+        for(Order a_order:a_orderS){
+            if(!a_usedBlockS.contains(a_order.mID) && a_ctrl.contains(a_order.mID)){//使用済みでなく、基準点と関連のあるものを調べる
+                int count = a_order.countConstraint();//制約数を調べる
+                //System.out.println("next;name="+a_order.mID+" count="+count);
+                if(max < count){
+                    next = a_order;
+                    max = count;
+                }
+            }
+        }
+        return(next);//最も制約数の多いものを返す
+    }
+    
+    //次の基準点を求める
+    Order getNextCtrl2(ArrayList<String> a_usedBlockS,ArrayList<Order> a_orderS){
+        int max = -1;
+        Order next = null;
+        for(Order a_order:a_orderS){
+            if(!a_usedBlockS.contains(a_order.mID)){//使用済みでないものを調べる
+                int count = a_order.countConstraint();//制約数を調べる
+                if(max < count){
+                    next = a_order;
+                    max = count;
+                }
+            }
+        }    
+        return(next);
+    }
+    
+    ArrayList<Space> getTargetList2(){
+        ArrayList<Integer> space = new ArrayList<Integer>();
+        Converter conv = new Converter();
+        space =  conv.getSpace2();
+        ArrayList<String> objList = conv.getExObjList();
+        ArrayList<Order> orderList = conv.getExOrdeListr(objList);
+        //Orderから Place 概念解(重力、重さを考えない)を求める
+        ArrayList<Place> ansOrigin = new ArrayList<Place>();
+        ArrayList<String> usedBlockS = new ArrayList<String>();
+        ArrayList<Integer[]> usedPointS = new ArrayList<Integer[]>();
+        Order ctrl = MapMaker.getControlPoint(orderList);//基準点を求める
+        Order current = ctrl;//現在扱う点
+        Integer[] ctrlPoint = new Integer[] {0,0};//基準座標
+        //usedPointS.add(ctrlPoint);
+        while(ansOrigin.size() < objList.size()){
+            Place new_place = new Place(current.mID);
+            Integer[] new_pos = setPoint(ctrlPoint,current.mID,ctrl,usedPointS);
+            new_place.coordinate = new_pos;
+            usedPointS.add(new_pos);
+            usedBlockS.add(current.mID);
+            new_place.Upper = new ArrayList<String>(current.mYLessThan);
+            new_place.Lower = new ArrayList<String>(current.mYGreaterThan);
+            new_place.Equal = new ArrayList<String>(current.mYEqual);
+            ansOrigin.add(new_place);
+            new_place.show();
+            Order next = getNextOrder(ctrl,usedBlockS,orderList);//次に扱う点を基準点との関りから求める
+            if(next == null){//現在の基準点からは求まらなかった場合
+                if(!ctrl.equals(current)){
+                    ctrl = current;
+                    current = getNextOrder(ctrl,usedBlockS,orderList);
+                    if(current == null){
+                        current = getNextCtrl2(usedBlockS,orderList);
+                    }
+                }
+                else{
+                    ctrl = getNextCtrl2(usedBlockS,orderList);
+                    //System.out.println("new ctrl ="+ctrl.mID);
+                    current = ctrl;
+                }
+                ctrlPoint[0] = new_pos[0];ctrlPoint[1] = new_pos[1];
+            }
+            else{
+                current = next;
+                //current.show();
+            }
+        }//while(ansOrigin.size() < objList.size())
+        
+        //概念解の各楯列の最高・最低点を求め異なるなら２点間でずらす int[] current int[][] range
+        Integer[] minYS = new Integer[space.get(1)],maxYS = new Integer[space.get(1)];//各縦列の高さ、低さ
+        Integer[] slideS = new Integer[space.get(1)];
+        Arrays.fill(minYS,0);Arrays.fill(maxYS, 0);Arrays.fill(slideS, 0);
+        for(Place place:ansOrigin){
+            if(minYS[place.coordinate[0]] > place.coordinate[1]){//現在より低い地点があった場合
+                minYS[place.coordinate[0]] = place.coordinate[1];
+            }
+            if(maxYS[place.coordinate[0]] < place.coordinate[1]){//現在より高い地点があった場合
+                maxYS[place.coordinate[0]] = place.coordinate[1];
+            }
+        }
+        
+        for(int i = 0; i < slideS.length; ++i){
+            System.out.println("max"+i+"="+maxYS[i]+" min"+i+"="+minYS[i]);
+            slideS[i] = maxYS[i];//最高点をコピー
+        }
+        
+        //概念解をずらすときに関連するブロックもずらす
+        //ずらしたものを変換したものを解とする
+        ArrayList<Space> answerList = new ArrayList<Space>();
+        int width = space.get(0),height = space.get(1);
+        boolean end = false;
+        while(answerList.size() < 100){
+            //ArrayList<Integer[]> newPointS = new ArrayList<Integer[]>();//ずらした後の座標
+            ArrayList<Place> newPlaceS = new ArrayList<Place>();
+            ArrayList<String> slided = new ArrayList<String>();
+            for(Place place:ansOrigin){
+                //newPointS.add(place.coordinate);
+                newPlaceS.add(new Place(place));
+            }
+            //System.out.println("slideS="+slideS[0]);
+            for(int i = 0; i < width; ++i){//左からずらしていく
+                for(Place place:newPlaceS){//現在ある点を全て調べる
+                    if(place.coordinate[0] == i && minYS[i] <= slideS[i]){//X座標が一致した場合
+                        if(!slided.contains(place.name)){
+                            place.coordinate[1]-= slideS[i];//Y座標をずらす
+                             System.out.println("slide "+place.name+":"+place.coordinate[1]+" "+slideS[i]);
+                            slided.add(place.name);
+                        }
+                       
+                        //*
+                        for(String upper:place.Upper){//ずらしたブロックより高い位置にあるブロックを調べる
+                            for(Place place2:newPlaceS){
+                                if(place2.name.equals(upper) && slideS[i] < 0 && !slided.contains(place2.name)){
+                                    place2.coordinate[1] -= slideS[i];
+                                    System.out.println("upper slide "+place2.name+":"+place2.coordinate[1]+" "+slideS[i]);
+                                    slided.add(place2.name);
+                                }
+                            }
+                        }
+                        for(String lower:place.Lower){//ずらしたブロックより低い位置にあるブロックを調べる
+                            for(Place place2:newPlaceS){
+                                if(place2.name.equals(lower) && slideS[i] > 0 && !slided.contains(place2.name)){
+                                    place2.coordinate[1] -= slideS[i];
+                                    System.out.println("lower "+place2.name+":"+place2.coordinate[1]+" "+slideS[i]);
+                                    slided.add(place2.name);
+                                }
+                            }
+                        }
+                        //*/
+                        for(String equal:place.Equal){//ずらしたブロックと同じ高さにあるブロックを調べる
+                            for(Place place2:newPlaceS){
+                                if(place2.name.equals(equal) && slideS[i] != 0 && !slided.contains(place2.name)){
+                                    place2.coordinate[1] -= slideS[i];
+                                    slided.add(place2.name);
+                                }
+                            }
+                        }
+                    }//if(place.coordinate[0] == i){//X座標が一致した場合
+                }//for(Place place:newPlaceS){//現在ある点を全て調べる
+                
+                if(slideS[i] < minYS[i]){
+                    if(i == 0){
+                        end = true;
+                        break;
+                    }
+                    else{
+                        --slideS[i-1];//minYSより小さいかのチェックが大事
+                        for(int j = i+1; j < width; ++j){
+                            slideS[j] = maxYS[j];
+                        }
+                    }
+                }
+                else{
+                    if( i == width-1){
+                        --slideS[i];
+                    }
+                }
+            }//for(int i = 0; i < width; ++i)
+            if(end){
+                break;
+            }
+            
+            Space ans = new Space();
+            for(int i = 0; i < width;++i){//空間、深さを初期代入
+                ans.mSpaceSize.put(i,new Integer[] {0,height} );
+                ans.mXDepth.put(i, 0);
+            }
+            for(Place place:newPlaceS){
+                ans.mBlocks.put(place.name, place.coordinate);
+                Integer x = place.coordinate[0],y = place.coordinate[1];
+                if(ans.mSpaceSize.get(x)[1] > y){
+                    ans.mSpaceSize.put(x,new Integer[] {y,height});
+                    ans.mXDepth.put(x, y);
+                }
+            }
+            answerList.add(ans);
+            ans.show();
+        }//
+        
+        return(answerList);
+    }
+    
+    ArrayList<Space> getTargetList(){
         ArrayList<Integer> space = new ArrayList<Integer>();
         Converter conv = new Converter();
         space =  conv.getSpace2();
@@ -551,6 +835,6 @@ public class Target {//目標状態のリストを生成する
     
     public static void main(String[] args){
         Target tgt = new Target();
-        tgt.getTagetList();
+        tgt.getTargetList2();
     }
 }
