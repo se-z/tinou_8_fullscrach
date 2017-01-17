@@ -53,7 +53,7 @@ public class Converter {//自然言語の入力に対して、順序構造を表
         put("上","下");put("下", "上");put("右","左");put("左", "右");
     }};
     static String justRegex = "ちょうど|真";
-    static String path = "src\\natural\\language\\Blocks.json";
+    static String path = "src\\natural\\language\\Block2.json";
     
 ArrayList<String> getObjList(ArrayList<String> arg_tgtStateS){
     ArrayList<String> list = new ArrayList<String>();

@@ -3,42 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+//package services;
 package natural.language;
-import java.util.HashMap;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
 /**
  *
  * @author YOSHINO KAI
  */
-<<<<<<< HEAD
-public class Space {
-    HashMap<String,Integer[]> mBlocks;
-    HashMap<Integer,Integer[]> mSpaceSize;
-    HashMap<Integer,Integer> mXDepth;
-    void show(){
-        System.out.print("Blocks=");
-        for(HashMap.Entry<String, Integer[]> e : mBlocks.entrySet()) {
-            System.out.print(e.getKey() + " :[ " + e.getValue()[0]+","+e.getValue()[1]+"] ");
-        }
-        System.out.println("");
-        System.out.print("space=");
-        for(HashMap.Entry<Integer, Integer[]> e : mSpaceSize.entrySet()) {
-            System.out.print(e.getKey() + " :[ " + e.getValue()[0]+","+e.getValue()[1]+"] ");
-        }
-        System.out.println("");
-        System.out.println("Depth="+mXDepth);
-    }
-    
-    public Space(){
-        mBlocks = new HashMap<String,Integer[]>();
-        mSpaceSize = new  HashMap<Integer,Integer[]>();
-        mXDepth = new HashMap<Integer,Integer>();
-    }
-=======
+
+/**
+ * Created by seijihagawa on 2017/01/12.
+ */
 public class Space implements Cloneable{ //clone()を使うためのimplements
 	private HashMap<String,Position> mBlocks;//ブロックの座標
 	private HashMap<String,int[]> mSpaceSize;//座標空間の広さ
@@ -122,8 +99,7 @@ public class Space implements Cloneable{ //clone()を使うためのimplements
 		}
 		return null;
 	}
-	
-	
+		
 	/**
 	 * 指定したブロックの座標を返す.
 	 * @param aID
@@ -181,8 +157,7 @@ public class Space implements Cloneable{ //clone()を使うためのimplements
 			return;
 		mFixedBlocks.add(aID);
 	}
-	
-	
+		
 	/**
 	 * 穴を掘る.
 	 * ブロックがあって掘れなかった場合はfalse,
@@ -348,5 +323,63 @@ public class Space implements Cloneable{ //clone()を使うためのimplements
 		tNewSpace=(Space)super.clone();
 		return tNewSpace;
 	}
->>>>>>> d290967c6d49adef01d7a6ec8ba6218fdf0e49e3
+        
+        /**
+        *答えが正常かどうか確かめる
+        **/
+        boolean checkSpace(){
+            for(HashMap.Entry<String,Position> block:mBlocks.entrySet()){
+                if(block.getValue().mY > 0 && //ブロックが宙に浮いていて
+                   (
+                    ! mBlocks.containsValue(new Position(block.getValue().mX ,block.getValue().mY-1 ))
+                    )//その下にブロックがない場合
+                    ){
+                return(false);
+            }
+        }
+        return(true);
+    }
+        
+        /**
+        *表示を行う
+        **/
+        void show(){
+            System.out.print("Blocks=");
+            for(HashMap.Entry<String, Position> e : mBlocks.entrySet()) {
+                System.out.print(e.getKey() + " :[ " + e.getValue().mX+","+e.getValue().mY+"] ");
+            }
+            System.out.println("");
+            System.out.print("space=");
+            for(HashMap.Entry<String, int[]> e : mSpaceSize.entrySet()) {
+                System.out.print(e.getKey() + " :[ " + e.getValue()[0]+","+e.getValue()[1]+"] ");
+            }
+            System.out.println("");
+            System.out.println("Depth="+mXDepth);
+    }
 }
+/*
+public class Space {
+    HashMap<String,Integer[]> mBlocks;
+    HashMap<Integer,Integer[]> mSpaceSize;
+    HashMap<Integer,Integer> mXDepth;
+    void show(){
+        System.out.print("Blocks=");
+        for(HashMap.Entry<String, Integer[]> e : mBlocks.entrySet()) {
+            System.out.print(e.getKey() + " :[ " + e.getValue()[0]+","+e.getValue()[1]+"] ");
+        }
+        System.out.println("");
+        System.out.print("space=");
+        for(HashMap.Entry<Integer, Integer[]> e : mSpaceSize.entrySet()) {
+            System.out.print(e.getKey() + " :[ " + e.getValue()[0]+","+e.getValue()[1]+"] ");
+        }
+        System.out.println("");
+        System.out.println("Depth="+mXDepth);
+    }
+    
+    public Space(){
+        mBlocks = new HashMap<String,Integer[]>();
+        mSpaceSize = new  HashMap<Integer,Integer[]>();
+        mXDepth = new HashMap<Integer,Integer>();
+    }
+}
+//*/
