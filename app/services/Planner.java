@@ -46,24 +46,24 @@ public class Planner {
     /**
      * Goalsの系列に対して、その系列をOperationに投げる
      */
-    public OperationSeries[] STRIPS() {
-        String tTarget = mGoals.getCurrentTarget();
-        // while (){
-        // if(現状の空間が次の空間に繊維可能でなければ)
-        // { backTrack または、目標状態の系列の着替えを行う}
-        // 以下成功パターン
-        // tTargetをOperatorに渡して、OperatorからSpaceの一覧をもらう
-        // tSpaceをmSubGoalsListの一つのListに代入。
-        // この状態を繰り返す
-        // すべての状態が達成されたらbreak
-        // }
-
-        // for(mapのすべての値について){
-        // getSeriresを行う
-        // }
-        // return OperationSeries
-
-    }
+//    public OperationSeries[] STRIPS() {
+//        String tTarget = mGoals.getCurrentTarget();
+//        // while (){
+//        // if(現状の空間が次の空間に繊維可能でなければ)
+//        // { backTrack または、目標状態の系列の着替えを行う}
+//        // 以下成功パターン
+//        // tTargetをOperatorに渡して、OperatorからSpaceの一覧をもらう
+//        // tSpaceをmSubGoalsListの一つのListに代入。
+//        // この状態を繰り返す
+//        // すべての状態が達成されたらbreak
+//        // }
+//
+//        // for(mapのすべての値について){
+//        // getSeriresを行う
+//        // }
+//        // return OperationSeries
+//
+//    }
 
 
 }
