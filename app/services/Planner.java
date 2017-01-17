@@ -13,19 +13,6 @@ import java.util.HashMap;
  * 現在の状態が目標状態に
  * なっているかを確かめ、
  * プランを適用する
- * <p>
- * <p>
- * + field: type
- * ・mGoals:Goals
- * ・mSubGoals:
- * map(key:id, value:subGoals)
- * ・mTargetSpace:Space
- * ・mTargetOptions:Space[]
- * ・mBlocks:Block[]
- * ・mCurrentSpace:Space
- * ・mTargetBlockID:string
- * <p>
- * <p>
  * + method(type): type
  * ・STRIPS(): ここの内部実装が結構複雑そう
  * ・matchState():boolean
@@ -34,30 +21,47 @@ import java.util.HashMap;
 
 public class Planner {
     private Goals mGoals;
-    private HashMap<String, SubGoals> mSubGoals;
-    private Space mTargetSpace; //これいらないかも
+    private HashMap<String, SubGoals> mSubGoalsList;
     private Space[] mTargetOptions;
-    private Space mCurrentSpace;
-    private String mTargetBlockID;   //これグローバル変数として持つ必要ないかもしれない
     private static Block[] mBlocks; // このクラスはこの書き方でいいのか？
+    // private   オペレータが必要
 
-    Planner(Space[] aTargetOptions, Block[] aBlocks) {
+
+    /**
+     *
+     * @param aTargetOptions
+     * @param aBlocks
+     * @param aIDs データ的には重複するけど、IDはこの上のそうで処理するのが良い adapterクラス作る
+     * <p> 各IDに対応する、SubGoalsを生成する
+     */
+    Planner(Space[] aTargetOptions, Block[] aBlocks, String[] aIDs) {
+
         mTargetOptions = aTargetOptions;
         mBlocks = aBlocks;
-        mGoals = new Goals();
-        mSubGoals = new HashMap<>();
-        mTargetSpace = new Space();
-        mCurrentSpace = new Space();
-        mTargetBlockID = new String();
+        mGoals = new Goals(aIDs);
+        mSubGoalsList = new HashMap<>();
 
     }
-
 
     /**
      * Goalsの系列に対して、その系列をOperationに投げる
      */
     public OperationSeries[] STRIPS() {
+        String tTarget = mGoals.getCurrentTarget();
+        // while (){
+        // if(現状の空間が次の空間に繊維可能でなければ)
+        // { backTrack または、目標状態の系列の着替えを行う}
+        // 以下成功パターン
+        // tTargetをOperatorに渡して、OperatorからSpaceの一覧をもらう
+        // tSpaceをmSubGoalsListの一つのListに代入。
+        // この状態を繰り返す
+        // すべての状態が達成されたらbreak
+        // }
 
+        // for(mapのすべての値について){
+        // getSeriresを行う
+        // }
+        // return OperationSeries
 
     }
 
