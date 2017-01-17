@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="http://visjs.org/dist/vis.js"></script>
+    <link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="ruleBase.js"></script>
+    <script type="text/javascript" src="function.js"></script>
+    <script type="text/javascript" src="ruleEdit.js"></script>
+    <style type="text/css">
+
+        #mynetwork {
+        width: 1400px;
+        height: 780px;
+        border: 10px solid lightgray;
+        margin: 0 auto;
+        }
+
+
+        #input{
+        width:1200px;
+        height:100px;
+        margin:20px;
+        }
+
+
+        #mode{
+        width: 200px;
+        height:100px;
+        margin:20px 50px;
+        }
+
+        #execute{
+        width:200px;
+        height:100px;
+        margin:20px 50px;
+        }
+
+
+        #add{
+        width:100px;
+        height:20px;
+        }
+
+
+        #rules{
+        margin: 0px 0px 0px 20px;
+        }
+
+
+        #ruleName{
+        width:300px;
+        height:20px;
+        }
+
+        #if{
+        width:300px;
+        height:100px;
+        margin:10px 20px;
+        }
+
+
+        #then{
+        width:300px;
+        height:100px;
+        margin:10px 20px;
+        }
+
+        #adapt{
+        width:50px;
+        height:50px;
+        margin:0px 0px 0px 20px;
+        }
+
+        input.rule{
+        width:380px;
+        }
+    </style>
+    <style type="text/css">
+        .boxContainer {
+        display: flex;
+        display: -moz-box;
+        display: -o-box;
+        display: -webkit-box;
+        display: -ms-box;
+        box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        -o-box-orient: horizontal;
+        -webkit-box-orient: horizontal;
+        -ms-box-orient: horizontal;
+        -moz-box-sizing: content-box;
+        }
+    </style>
+</head>
+
+<body>
+<div class = "boxContainer" id = "ue">
+    <div class = "box">
+        <form name = "as">
+            <textarea name="input" id="input" rows= "5" placeholder="ここにアサーションを入力してください."></textarea>
+        </form>
+    </div>
+    <form name = "first">
+        <div class = "box">
+            <input type="button" value="前向き推論" id = "mode" name="mode" onclick = "ChangeMode()"/>
+        </div>
+    </form>
+    <form name = "second">
+        <div class = "box">
+            <input type="button" value="実行" id = "execute" name="execute" />
+        </div>
+    </form>
+</div>
+<!-- https://www.halawata.net/2011/10/css-float-display-box/ -->
+
+
+<div class = "boxContainer">
+    <div class = "box">
+        <input type="hidden" id='direction' value="DU"/>
+        <div id="mynetwork"></div></div>
+    <div class = "box">
+        <!-- http://peacepopo.net/blog-entry-94.html -->
+        <style type="text/css">
+            .box_scrollbar {
+            overflow:scroll;
+            width:400px;
+            height:280px;
+            padding:5px;
+            border:1px solid #000;
+            background-color:#F9F9F9;
+            color:#000;
+            font-size:12px;
+            }
+
+            .box_scrollbar2 {
+            overflow:scroll;
+            width:400px;
+            height:70px;
+            padding:5px;
+            border:1px solid #000;
+            background-color:#F9F9F9;
+            color:#000;
+            font-size:12px;
+            }
+
+            .box_title{
+            border:1px solid #000;
+            padding:5px;
+            width:400px;
+            font-weight:bold;
+            font-size:14px;
+            background-color:#000;
+            color:#fff;
+            }
+        </style>
+        <div class = "box_title" style = "margin: 0px 0px 0px 20px;">ルール一覧 <pre></pre>
+            <input type="button" value="新規追加"  id = "add" name="add" />
+            <input type="button" value="削除"  id = "delete" name="delete" />
+            <select name ="files" id ="rule_files">
+            </select>
+        </div>
+
+        <!--ルール一覧 開始-->
+        <div class = "box_scrollbar" id = "rules">
+        </div><!--ルール一覧 終点-->
+
+        <input type="hidden" id = "rule_id" name="rule_id" value = null /><!-- ルールid を入れる場所 -->
+
+        <font size = "5">&emsp;rule</font><br><!-- rule の文字 -->
+        <input type="text" size="20" id = "ruleName" name="ruleName" /><br><!-- ルール名を入れる場所 -->
+        <font size = "5">&emsp;if</font><br><!-- if の文字 -->
+
+        <div class = "box_scrollbar2" id = "if">
+        </div><!-- if 文一覧 終点-->
+
+        <font size = "5">&emsp;then</font><br>
+        <div class = "box_scrollbar2" id = "then">
+        </div><!-- then 文一覧 終点-->
+        <input type="button" value="適用" id = "apply" name="apply">
+        <input type="button" value="読み込み" id = "load" name="load"/>
+        <input type="button" value="書き込み" id = "btn_write" name="button_write"/>
+    </div>
+</div>
+
+
+</body>
+
+</html>

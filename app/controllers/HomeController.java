@@ -1,35 +1,22 @@
 ﻿package controllers;
-import play.mvc.Controller;
-import play.mvc.Result;
-import java.io.FileInputStream;
-import java.io.IOException;
+
+import play.mvc.*;
+import views.html.*;
 
 /**
- * Created by seijihagawa on 2016/12/06.
+ * This controller contains an action to handle HTTP requests
+ * to the application's home page.
  */
 public class HomeController extends Controller {
 
-    //これfullpath以外でやる方法ないかな....
-    //private final String kFilePath = "/Users/seijihagawa/java/3rdClass/kadai8_play_fullScrach/app/views/index.html";
-    private final String kFilePath = "./app/views/index.html";
-
     /**
-     * アプリケーションが起動されて、localHostに対するアクセスに対するレスポンスを返す関数.
-     * @return
-     * @throws IOException
-     * 最初に発火される関数
-     * 名前の変更はできない
+     * An action that renders an HTML page with a welcome message.
+     * The configuration in the <code>routes</code> file means that
+     * this method will be called when the application receives a
+     * <code>GET</code> request with a path of <code>/</code>.
      */
-    public Result index() throws IOException {
-
-        try {
-            FileInputStream tFile = new FileInputStream(kFilePath);
-            return ok(tFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
-        }
+    public Result index() {
+        return ok(index.render("Your new application is ready."));
     }
-
 
 }

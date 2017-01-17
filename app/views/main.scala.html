@@ -1,3 +1,11 @@
+@*
+ * This template is called from the `index` template. This template
+ * handles the rendering of the page header and body tags. It takes
+ * two arguments, a `String` for the title of the page and an `Html`
+ * object to insert into the body of the page.
+ *@
+@(title: String)(content: Html)
+
 <!DOCTYPE html>
 <!--
 To change this license header, choose License Headers in Project Properties.
@@ -12,15 +20,14 @@ and open the template in the editor.
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<<<<<<< HEAD
-  <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/anim.css")">
-  <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/base.css")">
+  <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/anim.css")'>
+  <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/base.css")'>
 
   <!-- <link rel="stylesheet" href="css/anim.css" type="text/css"> -->
   <!-- <link rel="stylesheet" href="css/base.css" type="text/css"> -->
 
   <!-- BootstrapのCSS読み込み -->
-  <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+  <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/bootstrap.css")'>
   <!-- <link href="css/bootstrap.css" rel="stylesheet"> -->
 
   <!-- jQuery読み込み -->
@@ -38,31 +45,6 @@ and open the template in the editor.
 
   <script src="@routes.Assets.versioned("javascripts/Plan.js")" type="text/javascript"></script>
   <!-- <script type="text/javascript" src="javascript/Plan.js"></script> -->
-=======
-  <link rel="stylesheet" href="css/anim.css" type="text/css">
-  <link rel="stylesheet" href="css/base.css" type="text/css">
-
-<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/anim.css")">
-<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/base.css")">
-<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
-  <!-- BootstrapのCSS読み込み -->
-  <link href="css/bootstrap.css" rel="stylesheet">
-
-  <!-- jQuery読み込み -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="@routes.Assets.versioned("javascripts/Plan.js")" type="text/javascript"></script>
-<script src="@routes.Assets.versioned("javascripts/angular.min.js")" type="text/javascript"></script>
-<script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")" type="text/javascript"></script>
-<script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
-  <!-- Angular読み込み -->
-  <script src="javascript/angular.min.js"></script>
-
-  <!-- BootstrapのJS読み込み -->
-  <script src="javascript/bootstrap.min.js"></script>
-
-  <script type="text/javascript" src="javascript/Plan.js"></script>
->>>>>>> 0f70ad5428087f666be83ac42f765fcbf466ad7a
 </head>
 
 <body>
@@ -81,18 +63,12 @@ and open the template in the editor.
 
   <form id="DeleteBoxArea" name="deletebox"><!-- ボックス削除エリア開始 -->
     <div class="title">DeleteBox</div>
-<<<<<<< HEAD
     <div id="DeleteBoxDisplay" name="Display" class="content" ng-model="DeleteBox" ondragover="_dragover(event)" ondrop="_drop_delete(event)"></div>
   </form><!-- ボックス削除エリア終了 -->
 
   <!-- 適用ボタン -->
   <input type="button" id="ApplicateButton" class="btn btn-info" value="適用" disabled/>
 
-=======
-    <div id="DeleteBoxDisplay" name="Display" class="content" ng-model="DeleteBox"></div>
-  </form><!-- ボックス削除エリア終了 -->
-
->>>>>>> 0f70ad5428087f666be83ac42f765fcbf466ad7a
   <!-- 実行ボタン -->
   <input type="button" id="ExecButton" class="btn btn-primary" value="実行" disabled/>
 
@@ -139,11 +115,7 @@ and open the template in the editor.
         <input type="checkbox" id="CheckWeight" name="Check" ng-model="weight"><br/>
       </form>
       <p class="CategoryName bg-primary text-white">Preview</p>
-<<<<<<< HEAD
       <div id="PreviewBox" class="box">
-=======
-      <div id="PreviewBox" class="box" ondragstart="_dragstart(event)" draggable="true">
->>>>>>> 0f70ad5428087f666be83ac42f765fcbf466ad7a
         <div id="PreviewName" class="word"><p></p></div>
       </div>
       <input type="button" id="AddBoxButton" class="btn btn-success" value="作成" disabled/>
@@ -152,15 +124,9 @@ and open the template in the editor.
   </div>
 </div><!-- メイクボックスエリア終了 -->
 
-<<<<<<< HEAD
 <form id="TargetStateArea" name="targetstate" ng-controller="TargetCtrl" novalidate><!-- 目標状態入力エリア開始 -->
   <div class="title">TargetState</div>
   <textarea id="TargetInput" name="TextArea" class="content" ng-model="TargetState" ng-required="true" ng-keyup="CheckTarget()"></textarea>
-=======
-<form id="TargetStateArea" name="targetstate"><!-- 目標状態入力エリア開始 -->
-  <div class="title">TargetState</div>
-  <textarea id="TargetInput" name="TextArea" class="content" ng-model="TargetState" ng-required="true"></textarea>
->>>>>>> 0f70ad5428087f666be83ac42f765fcbf466ad7a
   <div class="ErrorMessage" ng-show="targetstate.TextArea.$error.required">必ず入力してください</div>
 </form><!-- 目標状態入力エリア終了 -->
 
