@@ -42,9 +42,9 @@ public abstract class Operator {
      * @param aCurrentSpace
      * @return
      */
-    public boolean canMove(Space aCurrentSpace) {
-
-    }
+//    public boolean canMove(Space aCurrentSpace) {
+//
+//    }
 
     /**
      * どのblockに着目するかを判断し、着目したblockが移動できる座標の一覧を返す.
