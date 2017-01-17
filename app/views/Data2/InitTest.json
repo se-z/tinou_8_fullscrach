@@ -1,0 +1,9 @@
+[
+    {"id":0,       "coordinate":[3,3]},
+    {"id":"A",     "label":[0,0],"coordinate":[0,0], "shape":"box","color":"red"},
+    {"id":"B",     "label":[0,1],"coordinate":[0,1], "shape":"triangle","color":"blue"},
+    {"id":"C",     "label":[0,2],"coordinate":[0,2], "shape":"trapezoid","color":"green"},
+    {"id":"D",     "label":[0,3],"coordinate":[0,3], "shape":"box","color":"red"},
+    {"id":"Last",   "label":["A is on floor","B is on floor","C is on floor","D is on floor","A is Blue","A is Sphere","B is Square","B is blue","C is green Triangle"]},
+    {"id":"Target", "label":["A on C","D on A","B on D"]}
+]
