@@ -1,5 +1,6 @@
 package controllers;
-
+import services.*;
+import java.util.ArrayList;
 import play.mvc.*;
 import views.html.*;
 
@@ -16,7 +17,12 @@ public class HomeController extends Controller {
      * <code>GET</code> request with a path of <code>/</code>.
      */
     public Result index() {
-        return ok(index.render("Your new application is ready."));
+		Target tgt = new Target();
+        ArrayList<Space> answer = tgt.getTargetList2();
+		String dir = System.getProperty("user.dir");
+		System.out.println("CyrrentDirectry=： " + dir);
+		return ok(index.render(answer.toString()));
+        //return ok(index.render("Your new application is ready."));
     }
 
 }

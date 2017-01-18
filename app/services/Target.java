@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import play.*;
+import play.mvc.*;
+import views.html.*;
 
 class Constraint{
     String mID;
@@ -625,7 +628,29 @@ public class Target {//目標状態のリストを生成する
         return(next);
     }
     
-    ArrayList<Space> getTargetList2(){
+	boolean checkSlideS(Integer[] a_slideS,Integer[] a_maxYS,Integer[] a_minYS,int a_current,int a_width){
+        boolean end=false;
+        if(a_current == a_width-1){//右端のスライドであった場合
+            --a_slideS[a_current];//minYS[i]に近づける
+            for(int j = 0; j < a_width; ++j){//全てのスライドを調べる
+                if(a_slideS[j] < a_minYS[j]){//限界を超えた場合
+                    if(j == 0){//左端が限界に達したら終了
+                        end = true;
+                    }
+                    else{//そうでない場合
+                        --a_slideS[j-1];
+                        for(int k = j; k < a_width; ++k){
+                            a_slideS[k] = a_maxYS[k];
+                         }
+                    }
+                }//if(slideS[j] < minYS[j])
+            }//for(int j = 0; j < width; ++j)
+        }//if(i == width-1)
+        return(end);
+    }
+
+	
+    public ArrayList<Space> getTargetList2(){
         ArrayList<Integer> space = new ArrayList<Integer>();
         Converter conv = new Converter();
         space =  conv.getSpace2();
@@ -743,45 +768,12 @@ public class Target {//目標状態のリストを生成する
                         }
                     }//if(place.coordinate[0] == i){//X座標が一致した場合
                 }//for(Place place:newPlaceS){//現在ある点を全て調べる
-                if(i == width-1){
-                    --slideS[i];
-                    for(int j = 0; j < width; ++j){
-                       if(slideS[j] < minYS[j]){
-                           if(j == 0){
-                               end = true;
-                           }
-                           else{
-                               slideS[j] = maxYS[j];
-                               --slideS[j-1];
-                               for(int k = j +1; k < width; ++k){
-                                   slideS[k] = maxYS[k];
-                               }
-                           }
-                       }
-                    }
-                }
                 
-                if(end)break;
+                end = checkSlideS(slideS,maxYS,minYS,i,width);
+                if(end){
+					break;
+				}
                 
-                /*
-                if(slideS[i] < minYS[i]){//最小値を超えた場合
-                    if(i == 0){
-                        end = true;
-                        break;
-                    }
-                    else{
-                        --slideS[i-1];
-                        for(int j = i+1; j < width; ++j){
-                            slideS[j] = maxYS[j];
-                        }
-                    }
-                }
-                else{
-                    if( i == width-1){
-                        --slideS[i];
-                    }
-                }
-                //*/
             }//for(int i = 0; i < width; ++i)
             System.out.println("slideS="+slideS[0]+","+slideS[1]+","+slideS[2]+","+slideS[3]+","+slideS[4]);
             if(end){
@@ -800,7 +792,7 @@ public class Target {//目標状態のリストを生成する
         return(answerList);
     }
     
-    ArrayList<Space> getTargetList(){
+    public ArrayList<Space> getTargetList(){
         ArrayList<Integer> space = new ArrayList<Integer>();
         Converter conv = new Converter();
         space =  conv.getSpace2();
