@@ -1,4 +1,3 @@
-
 package services;
 
 import java.io.*;
@@ -81,8 +80,9 @@ public class Morpheme {
     static PrintWriter mecabOut;
     static BufferedReader mecabIn;
     //static String[] mecabCmd = {"C:\\Program Files (x86)\\MeCab\\bin\\mecab"};
-    static String[] mecabCmd = {"C:\\play\\hello\\public\\MeCab-bin\\mecab"};
-    //static String encoding = "EUC-JP";
+    //static String[] mecabCmd = {"C:\\play\\hello\\public\\MeCab-bin\\mecab"};
+    static String[] mecabCmd = {"..\\..\\lib\\MeCab-bin\\mecab"};
+	//static String encoding = "EUC-JP";
     //static String encoding = "UTF-8";//うまくいくが文字化けする
     static String encoding = "Shift_JIS";//完璧
 
