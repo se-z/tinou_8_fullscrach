@@ -22,7 +22,7 @@ var anim_start_ary = new Array();
 var anim_end_ary = new Array();
 
 var mId;
-var mColor = "#ff0000";
+var mColor = "red";
 var mShape = "box";
 var mWeight =false;
 // mWeight = new Boolean(false);
@@ -122,7 +122,7 @@ function onSetBoxNameButton(){
 function SetInitBoxState(){
   var tTargetBox = document.getElementById("PreviewBox");
 
-  mColor = "#ff0000";
+  mColor = "red";
   mShape = "box";
   mWeight = false;
 
@@ -190,8 +190,11 @@ function SetCurrentBoxState(){
     CheckWeight.checked=false;
   }
 
-  // Shapeをtriangleにできない状況ならtrue
-  RadioShape2.disabled = ApaxCheck(tNum);
+  // Shapeをtriangleにできない状況(頂点じゃない)ならtrue
+  if(ApaxCheck(tNum)){
+  }else{
+  RadioShape2.disabled = true;
+  }
 }
 
 // ボックスが同X座標で頂点にあるかの判定
@@ -199,15 +202,21 @@ function ApaxCheck(aNum){
   var tNum=aNum;
   var tNumY = init_anim_data[tNum].coodinate[0];
   var tNumX = init_anim_data[tNum].coodinate[1];
+  ///var tSameXCount = 0;
 
   for(var i = 0, len = init_anim_data.length; i < len; ++i){
     if(init_anim_data[i].coodinate[1] == tNumX){
-      if(i != tNum && init_anim_data[i].coodinate[0] < tNumY){
-        return true;
+      ///tSameXCount++;
+      if(/*i != tNum && */init_anim_data[i].coodinate[0] > tNumY){
+        return false;///
       }
     }
   }
-  return false;
+//  if(tSameXCount == 1){
+    return true;
+  // }else{
+  //   return false;
+  // }
 }
 
 // MakeBoxAreaの状態初期化
@@ -242,9 +251,9 @@ function onAddBoxButton(){
     // パネルの設置　x座標描画限界(10)まで
     if(mBoxAddCount<10){
       MakePanel();
+      mBoxAddCount++;
     }
 
-    mBoxAddCount++;
     mBoxCount++;
     PrepareMakeBox();
   }
@@ -268,6 +277,14 @@ function MakePanel(){
 
 // ChangeBoxButton対応　変更の反映
 function onChangeBoxButton(){
+  var element = document.getElementById("NewBoxPlace");
+  var NewBoxs = element.childNodes;
+
+  // 前回作成したブロックが設置されていないなら新規作成できない
+  if(NewBoxs.length != 0){
+    alert("新規ボックスを初期状態に配置してください");
+  }else{
+
   var tNum = mNameList.indexOf(mId);
   init_anim_data[tNum].shape = mShape;
   init_anim_data[tNum].heavy = mWeight;
@@ -292,12 +309,13 @@ function onChangeBoxButton(){
 
   var tPanelId = 'Panel'+init_anim_data[tNum].coodinate[1];
 
-  if(ApaxCheck(tNum)){
-  } else { // 頂点のボックスなら直上のパネルが使えるか判定
+  if(ApaxCheck(tNum)){// 頂点のボックスなら直上のパネルが使えるか判定
     UsePanelCheck(tPanelId,tNum);
+  } else {
   }
   PrepareMakeBox();
   RadioShape2.disabled=false;
+}
 }
 
 // Shapeのラジオボタンに対応
@@ -317,7 +335,7 @@ function onRadioButtonChangeShape() {
     tTargetBox.style.borderBottom = '100px solid '+ mColor;
   }else{
     tTargetBox.style.backgroundColor = mColor;
-    tTargetBox.Style.borderBottom = '1px solid '+'#000000';
+    tTargetBox.style.borderBottom = '1px solid '+'#000000';
   }
 }
 
@@ -366,6 +384,7 @@ function addEvents(){
   document.getElementById('ChangeBoxButton').disabled = true;//変更を不可能にする
   document.getElementById('ApplicateButton').disabled = true;//適用を不可能にする
   document.getElementById('ExecButton').disabled = true;//実行を不可能にする
+  document.getElementById('TargetInput').disabled = false; // 目標状態の変更を可能にする
 }
 
 
@@ -410,13 +429,15 @@ function onApplicateButton(){
     // ボックスのドラッグ無効化
     for(var j=0,len = mNameList.length;j<len;++j){
       var tBoxId = document.getElementById('box'+init_anim_data[j].id);
-      alert(tBoxId);
       tBoxId.draggable = false;
-      alert(tBoxId.draggable);
       tBoxId.removeEventListener('dragstart',_dragstart,false);
     }
+    PrepareMakeBox(); // MakeBoxAreaを初期状態にする
+    document.getElementById('MakeNameInput').disabled = true; // 名前の入力を不可能にする
+    document.getElementById('TargetInput').disabled = true; // 目標状態の変更を不可能にする
+    document.getElementById('ApplicateButton').disabled = true; // 適用を不可能にする
   }
-  document.getElementById('ExecButton').disabled = tCheckState;
+  document.getElementById('ExecButton').disabled = tCheckState; // 推論可能ならば実行ボタンを使用可能にする
 }
 
 // 実行ボタン対応
@@ -426,22 +447,24 @@ function onExecButton(){
     get_process_data2();//過程データを読み込む
 
     init_Animation();
+
+    alert("アニメーションを開始します");
   }
-  anim_start_ary = new Array(todo_array.length);
-  anim_end_ary = new Array(todo_array.length);
+  anim_start_ary = new Array(anim_process_array.length);
+  anim_end_ary = new Array(anim_process_array.length);
   anim_start_ary.fill(false,0,anim_start_ary.length);
   anim_end_ary.fill(false,0,anim_end_ary.length);
-
   OperationProcess();//アニメーションを描く
   anim_start_ary[exec.step] = true;
   exec.anim_step = 0;exec.up = false;exec.hor = false;exec.down = false;
 
-  if(exec.step < todo_array.length){//プロセスが残っている場合
+  if(exec.step < anim_process_array.length){//プロセスが残っている場合
     exec.step++;//次のプロセスへ
     setTimeout(onExecButton,3000);//自分を時間差でまた呼び出す
   }else{
     exec.step = 0;
     console.log('Exec finished'+todo_array.length);
+    end_Animation();
   }
 }
 
@@ -860,11 +883,40 @@ function make_ObjFile(){
 
 
 function init_Animation(){
+  add_arm();
   // 描画領域のサイズ決定
   //$('#Anim').css('top',mIdData.length*100);
-  $('#Anim').css('top',init_anim_data.length*100);
+  // $('#Anim').css('top',init_anim_data.length*100);
   // 初期状態の作成
-  PrepareInitialState();
+  // PrepareInitialState();
+}
+
+// アニメーション終了処理
+function end_Animation(){
+alert("アニメーションを終了します");
+    // すべてのパネルの有効化
+    for(var i=0,len = mBoxAddCount;i<len;++i){
+      var tPanelId = 'Panel'+i;
+      SetDropEvent(tPanelId);
+    }
+    // ボックスのドラッグ有効化
+    for(var j=0,len = mNameList.length;j<len;++j){
+      var tBoxId = document.getElementById('box'+init_anim_data[j].id);
+      tBoxId.draggable = true;
+      tBoxId.addEventListener('dragstart',_dragstart,false);
+
+      var tBoxState = init_anim_data[j].coodinate;//[1];
+      var tBoxXState = tBoxState[1];
+      var tPanelId = 'Panel'+tBoxXState.toString();
+      if(ApaxCheck(j)){ // 頂点のボックスの場合は
+        UsePanelCheck(tPanelId,j); // 三角形なら直上のパネルを無効化
+      }
+    }
+    ResetState(); // アニメーションを初期状態へ戻す
+    PrepareMakeBox(); // MakeBoxAreaを初期状態にする
+    document.getElementById('TargetInput').disabled = false; // 目標状態の変更を可能にする
+    document.getElementById('ApplicateButton').disabled = false; // 適用を可能にする
+    document.getElementById('ExecButton').disabled = true; // 実行を不可能にする
 }
 
 // 指定されたリストのi番目の要素についてID、座標をセットする
@@ -887,43 +939,59 @@ function PrepareInitialState(){
   //$("#DrawingButton").prop("disabled", false);
   // var anim = document.getElementById('Anim');
 
-  // Groundにへんこう
-  var anim = document.getElementById('Ground');
+  // // Groundにへんこう
+  // var anim = document.getElementById('Ground');
+  //
+  // delete_children(anim);//ブロックが存在すれば全消去
 
-  delete_children(anim);//ブロックが存在すれば全消去
-
-  add_arm();
+  // add_arm();
   // add_hole();
-  for (var i = 0; i < init_anim_data.length; i++) {
-    SetData2(init_anim_data[i].id,init_anim_data[i].coordinate);
-    mShape = init_anim_data[i].shape;
-    mColor = init_anim_data[i].color;
-    add_box2();
-  }
+  // for (var i = 0; i < init_anim_data.length; i++) {
+  //   SetData2(init_anim_data[i].id,init_anim_data[i].coordinate);
+  //   mShape = init_anim_data[i].shape;
+  //   mColor = init_anim_data[i].color;
+  //   add_box2();
+  // }
 }
 
 
 // プロセスの描画
 function OperationProcess(){
-  if(exec.step < todo_array.length){
-    SetData2(process_array[exec.step].Target,process_array[exec.step].New);
-    set_arm();
+  if(exec.step < anim_process_array.length){
+    // SetData2(process_array[exec.step].Target,process_array[exec.step].New);
 
+    var tBoxId = anim_process_array[exec.step].id;
+    var tBoxNewPosition = anim_process_array[exec.step].newPosition;
+    var tWeight = $('#box'+tBoxId.toString()).hasClass('heavy');
+
+    // ホール込みのものを参照する
+    SetData2(tBoxId,tBoxNewPosition);
+    set_arm();
     // アームを動かすブロックにセットするために遅延
-    setTimeout(move_box,1500);
-    // move_box();
+    if(tBoxId.toString().indexOf('hole') != -1){
+      setTimeout(dig_hole,1500);//穴掘り
+    }else if(tWeight == true){
+      setTimeout(move_heavy_box,1500);//引きずり
+    }else{
+      setTimeout(move_box,1500);//通常移動
+    }
   }
 }
 
 
 function set_arm(){
-  var tSetArm = $('#box'+mId).position();
-
-  // アームをセットするまでの時間は早めに設定
-  $('#arm1')
-  .animate({'top':mAreaTop-25},300)
-  .animate({'left':tSetArm.left},300)
-  .animate({'top':tSetArm.top-25},300)
+  if(mId.length>1){
+    $('#arm1')
+    .animate({'top':mAreaTop-25},300)
+    .animate({'left':mXState},300)
+    .animate({'top':mYState-25},300)
+  }else{
+    var tSetArm = $('#box'+mId).position();
+    $('#arm1')
+    .animate({'top':mAreaTop-25},300)
+    .animate({'left':tSetArm.left},300)
+    .animate({'top':tSetArm.top-25},300)
+  }
 }
 
 
@@ -931,12 +999,25 @@ function set_arm(){
 function ResetState() {
   // ブロックを初期状態に移動させる
   for (var i = 0; i < init_anim_data.length; ++i) {
-    SetData2(init_anim_data[i].id,init_anim_data[i].label);
+    SetData2(init_anim_data[i].id,init_anim_data[i].coodinate);
+    ///mYState = mYState*(-1);
     move_box2();
   }
-  $('#arm1')
-  .animate({'top':mAreaTop-25,'left':0},1500)
+  _delete_element('arm1'); // アームの消去
 
+  // // 穴(ホール)をすべて消去 (init_anim_dataではなくホールの数でループさせる)
+  // for (var i = 0; i < mcount_hole; ++i) {
+  //   _delete_element('hole'+i);
+  // }
+
+}
+
+
+// 指定したIDのオブジェクトを削除
+function _delete_element(aId){
+    var dom_obj = document.getElementById(aId);
+    var dom_obj_parent = dom_obj.parentNode;
+    dom_obj_parent.removeChild(dom_obj);
 }
 
 // アームの作成
@@ -954,21 +1035,26 @@ function add_arm()
   $('#arm1').css({'position':'absolute','left':0,'top':mAreaTop-25});
 }
 
+// 穴掘りアニメーション
+function dig_hole(){
+  add_hole();
+  setTimeout(function(){anim_end_ary[exec.step] = true; },3000);
 
-// // 穴の作成
-// function add_hole()
-// {
-//   var div_element = document.createElement("div");
-//    div_element.setAttribute('class','hole');
-//    div_element.setAttribute('id','hole1');
-//   // var parent_object = document.getElementById("Anim");
-//
-//   // Groundにへんこう
-//   var parent_object = document.getElementById("Ground");
-//
-//   parent_object.appendChild(div_element);
-//   $('#hole1').css({'position':'absolute','left':100,'top':400});
-// }
+  $('#arm1').animate({'top':mAreaTop-25},1500);
+}
+
+// 穴の作成
+function add_hole()
+{
+  var div_element = document.createElement("div");
+   div_element.setAttribute('class','hole');
+  div_element.setAttribute('id',mId.toString());
+
+  var parent_object = document.getElementById("Ground");
+
+  parent_object.appendChild(div_element);
+  $('#'+mId.toString()).css({'position':'absolute','left':mXState,'top':mYState});
+}
 
 
 
@@ -1023,6 +1109,20 @@ function move_box(){
   // console.log('step='+exec.step+' tgt='+exec.target.toString());
 }
 
+// 重いボックスの移動 実行用
+function move_heavy_box(){
+  setTimeout(function(){anim_end_ary[exec.step] = true; },3000);
+  $('#arm1')
+  .animate({'top':-25},500)
+  .animate({'left':mXState},500)
+  .animate({'top':mYState-25},500)
+  $('#box'+mId)
+  .animate({'top':0},500)
+  .animate({'left':mXState},500)
+  .animate({'top':mYState},500)
+}
+
+
 //ボックスの移動　やり直し用
 function move_box2(){
   $('#box'+mId)//id を指定する
@@ -1032,14 +1132,14 @@ function move_box2(){
 }
 
 //ボックスの移動　穴に落とす
-function move_box3(){
-  $('#arm1')
-  .animate({'left':mXState},500)
-  // .animate({'top':mYState},500)
-  $('#box'+mId)//id を指定する
-  .animate({'left':mXState},500)
-  .animate({'top':mYState},500)
-}
+// function move_box3(){
+//   $('#arm1')
+//   .animate({'left':mXState},500)
+//   // .animate({'top':mYState},500)
+//   $('#box'+mId)//id を指定する
+//   .animate({'left':mXState},500)
+//   .animate({'top':mYState},500)
+// }
 
 
 
@@ -1086,9 +1186,10 @@ function _drop_delete(event){
   mBoxCount--;
 
   // ボックスオブジェクトの消去
-  var parent_object = document.getElementById("DeleteBoxDisplay");
-  parent_object.appendChild(drag_elm);
-  delete_children(parent_object);
+  _delete_element(id_name);
+  // var parent_object = document.getElementById("DeleteBoxDisplay");
+  // parent_object.appendChild(drag_elm);
+  // delete_children(parent_object);
 
   event.preventDefault();
   // RadioShape2.disabled=false;
@@ -1105,10 +1206,9 @@ function SetBox(event){
   // 横移動の場合のみ移動を認める
   if(SideCheck(tPanelId,tNum)){
     // 移動したオブジェクトの座標情報を変更
-    mXState = tPanelPosition.left;
-    mYState = tPanelPosition.top;
-
-    init_anim_data[tNum].coodinate[0] = mYState/100;
+    mXState = Math.ceil(tPanelPosition.left);
+    mYState = Math.ceil(tPanelPosition.top);
+    init_anim_data[tNum].coodinate[0] = -mYState/100;////
     init_anim_data[tNum].coodinate[1] = mXState/100;
     $('#'+id_name).css({'left':mXState,'top':mYState});
 
@@ -1147,10 +1247,10 @@ function DownBoxs(aNum){
   // 同X座標のボックスの位置修正
   for(var i = 0, len = init_anim_data.length; i < len; ++i){
     if(init_anim_data[i].coodinate[1] == tNumX){
-      if(i != tNum && init_anim_data[i].coodinate[0] < tNumY){
+      if(/*i != tNum &&*/ init_anim_data[i].coodinate[0] > tNumY){///
         j.push(i);
-        init_anim_data[i].coodinate[0] += 1;
-        var NewY = init_anim_data[i].coodinate[0]*100;
+        init_anim_data[i].coodinate[0] -= 1;///
+        var NewY = init_anim_data[i].coodinate[0]*(-100);/////
         $('#box'+init_anim_data[i].id.toString()).css({'top':NewY});
       }
     }
@@ -1158,8 +1258,8 @@ function DownBoxs(aNum){
 
   if(tNumX.toString()>=0){  // 初期配置でないとき
     var tNewPanelY = $('#Panel'+tNumX.toString()).position().top;
-    if(tNewPanelY < 0){
-      tNewPanelY +=100; // パネルの位置を一つ下げる
+    if(tNewPanelY < 0){////
+      tNewPanelY +=100; // パネルの位置を一つ下げる////
     }
     $('#Panel'+tNumX.toString()).css({'top':tNewPanelY});
 
@@ -1185,7 +1285,7 @@ function UsePanelCheck(aPanelId,aNum){
   var tNum = aNum;
 
   // ボックスが三角形か、Y座標上限でないかを元に判定
-  if(init_anim_data[tNum].shape == "triangle" || init_anim_data[tNum].coodinate[0]*100 == mAreaTop){
+  if(init_anim_data[tNum].shape == "triangle" || init_anim_data[tNum].coodinate[0]*(-100) == mAreaTop){///
     RemoveDropEvent(tPanelId); // パネルへのドロップを禁止
   } else {
     SetDropEvent(tPanelId);// パネルへのドロップを可能にする
