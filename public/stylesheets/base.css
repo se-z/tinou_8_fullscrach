@@ -208,27 +208,6 @@ Author     : YOSHINO KAI
   width: 417px;
 }
 
-
-
-/*以下は前Verで使用したもの*/
-#Exec{
-  font-size: 25px;
-  width: 200px;
-  height: 100px;
-  position: relative;
-  bottom: -50px;
-  left: 1500px;
-}
-
-#Load{
-  font-size: 25px;
-  width: 200px;
-  height: 100px;
-  position: relative;
-  bottom: -150px;
-  left: 1500px;
-}
-
 .MiniTask{
   width:  300px;
   height:20px;
