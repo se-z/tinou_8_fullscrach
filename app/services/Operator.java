@@ -56,7 +56,7 @@ public abstract class Operator {
         }
 
         // 移動できればおける座標
-        HashMap<Integer, Integer> tPlaceableSpace = new HashMap<>();
+        ArrayList<int[]> tPlaceableSpace = new ArrayList<>();
         int mXmin = mSpaceSize.get("x")[0];
         int mXmax = mSpaceSize.get("x")[1];
         int mYmin = mSpaceSize.get("y")[0];
@@ -67,37 +67,51 @@ public abstract class Operator {
             int tY = aCurrentSpace.getTopY(tX);
 
             if (!Objects.equals(tID, null) && mBlocks.get(tID).canBeOn()) {
-                tPlaceableSpace.put(tX, tY);
+            	int[] tPlaceblePosition={tX,tY};
+                tPlaceableSpace.add(tPlaceblePosition);
                 continue;
             }
 
             //Blockがない場合
             for (int y = tY; y >= mYmin; y--) {
-                tPlaceableSpace.put(tX, y);
+            	int[] tPlaceblePosition={tX,y};
+                tPlaceableSpace.add(tPlaceblePosition);
             }
         }
 
 
-        HashMap<Integer, Integer> tMoveable = new HashMap<>();
-        for (HashMap.Entry<Integer, Integer> tPlaceable : tPlaceableSpace.entrySet()) {
-            int tX = tPlaceable.getKey();
-            int tY = tPlaceable.getKey();
-            int[] tGoal = {tX, tY};
+        ArrayList<int[]> tMoveable = new ArrayList<>();
+        if(mBlocks.get(tMovingBlockID).isHeavy()){
+        	//重いBlockの場合
+        	for (int[] tPlaceable : tPlaceableSpace) {
+        		int tX = tPlaceable[0];
+        		int tY = tPlaceable[1];
+        		int[] tGoal = {tX, tY};
 
 
-            if (aCurrentSpace.getPosition(tMovingBlockID)[0] < tY) {
-                continue;
-            }
-            if (!canSlideThrough(aCurrentSpace.getPosition(tMovingBlockID), tGoal, aCurrentSpace)) {
-                continue;
-            }
+        		if (aCurrentSpace.getPosition(tMovingBlockID)[0] < tY) {
+        			continue;
+        		}
+        		if (!canSlideThrough(aCurrentSpace.getPosition(tMovingBlockID), tGoal, aCurrentSpace)) {
+        			continue;
+        		}
 
-            tMoveable.put(tX, tY);
+        		tMoveable.add(tGoal);
+        	}
+        }
+        //軽いBlockの場合
+        else tMoveable=tPlaceableSpace;
+
+        ArrayList<Space> tSpaceAfterMove=new ArrayList<>();
+        //移動可能な座標リストから、移動後のSpaceのリストを生成
+        for(int[] tNewPosition:tMoveable){
+        	Space tNewSpace=aCurrentSpace.cloneSpace();
+        	tNewSpace.setBlockCloneSpace(tMovingBlockID, tNewPosition[0], tNewPosition[1]);
+        	tSpaceAfterMove.add(tNewSpace);
         }
 
-
-        //新しくSpaceを作って、配列化して返却
-
+        //評価関数の戻り値を返却
+        return evaluateSpace(tSpaceAfterMove,aSubTargetBlockID);
     }
 
     /**
@@ -133,6 +147,18 @@ public abstract class Operator {
                 }
                 return false;
             }
+            
+
+            String tID=aSpace.getTopBlockID(x);
+            if(Objects.equals(tID, null)){
+            	continue;
+            }
+            Block tBlock=mBlocks.get(tID);
+            if(tBlock.canBeOn()){
+            	continue;
+            }
+
+            return false;
 
         }
         return true;
@@ -141,7 +167,7 @@ public abstract class Operator {
 
     /**
      * これまでの移動系列、副目標、現在の座標を用いて、移動するBlockを決定する
-     * 必ず、移動させられるBlockを返す
+     * 返却されるBlockは、上にBlockが乗っていないBlock
      *
      * @return 移動できるBlockがない場合はnullを返す
      * 返却値はObjects.equals(o1, o2):booleanでcheckする
@@ -178,6 +204,6 @@ public abstract class Operator {
      * @param aRootBlockID 副目標として設定されているブロック
      * @return
      */
-    abstract protected Space[] evaluateSpace(ArrayList<Space> tSpace, String aRootBlockID);
+    abstract protected Space[] evaluateSpace(ArrayList<Space> tSpace, String aSubTargetBlockID);
 
 }
