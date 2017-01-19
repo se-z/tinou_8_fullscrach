@@ -502,7 +502,7 @@ public class Target {//目標状態のリストを生成する
             break;
         }
         ++indexS[level-1];
-        if(ans.checkSpace() && level == maxLevel){
+        if(ans.check() && level == maxLevel){
             spaceS.add(ans);
             ans.show();
             System.out.print("indexS=");
