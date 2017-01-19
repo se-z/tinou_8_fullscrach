@@ -425,6 +425,12 @@ function onExecButton(){
   if(exec.step == 0){
     PrepareAjax();
     // ここで、process_arrayにresponse.jsonと同じ形式のデータを格納すればアニメーションを描画できます
+
+  for(var i=0;i<process_array.length;i++){
+    var temp = process_array[i].newPosition[0];
+    process_array[i].newPosition[0] = process_array[i].newPosition[1];
+    process_array[i].newPosition[1] = temp;
+  }
     make_hole();
     init_Animation();
     alert("アニメーションを開始します");
@@ -448,19 +454,53 @@ function onExecButton(){
 }
 
 
+//英語を日本語に(形)
+function transShapeJ(shapeJ){
+  shapeJ = shapeJ.replace("box","四角");
+  shapeJ = shapeJ.replace("triangle","三角");
+  shapeJ = shapeJ.replace("trapezoid","台形");
+  return shapeJ;
+}
+
+//英語を日本語に(色)
+function transColorJ(colorJ){
+  colorJ = colorJ.replace("red","赤");
+  colorJ = colorJ.replace("blue","青");
+  colorJ = colorJ.replace("green","緑");
+  colorJ = colorJ.replace("yellow","黄色");
+  return colorJ;
+}
+
 
 //GUI上の初期状態、目標状態からファイルを作る
 // $('#ExecButton').on('click', function () {
 function PrepareAjax(){
   scale=[mBoxAddCount,4]; //  Y座標は常に4まで
+  var scaleX = [0,mBoxAddCount];
+  var scaleY = [-2,4];
   var blocks = new Array();
+  var shapeJ = "";
+  var colorJ = "";
   for(var i=0; i<init_anim_data.length; i++){
-    var block = {"id":init_anim_data[i].id, "shape":init_anim_data[i].shape, "coodinate":init_anim_data[i].coodinate,"heavy":init_anim_data[i].heavy,"color":init_anim_data[i].color}
+    shapeJ = transShapeJ(init_anim_data[i].shape);
+    colorJ = transColorJ(init_anim_data[i].color);
+    var new_coodinate = new Array();
+    new_coodinate[0] = init_anim_data[i].coodinate[1];
+    new_coodinate[1] = init_anim_data[i].coodinate[0];
+    var block = {"id":init_anim_data[i].id, "shape":shapeJ, "coodinate":new_coodinate,"heavy":init_anim_data[i].heavy,"color":colorJ};
     blocks[i] = block;
   }
   var str = targetstate.TextArea.value;
-  order_data = str.split("\n");
-  var obj = {"space":scale,"blocks":blocks,"order":order_data}
+  var str2 = new Array();
+  while(order_data.pop());
+  str2 = str.split("\n");
+  for(var j=0;j<str2.length;j++){
+    if(str2[j] == ""){
+    }else{
+      order_data.push(str2[j]);
+    }
+  }
+  var obj = {"X":scaleX,"Y":scaleY,"blocks":blocks,"order":order_data};
   var JSONdata = JSON.stringify(obj,undefined,1);
   console.log(JSONdata);
 
