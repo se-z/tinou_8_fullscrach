@@ -6,6 +6,7 @@ package services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.lang.Math;
 
 /**
  * どの副目標から達成していくのかを管理します。
@@ -20,6 +21,7 @@ public class Goals {
     private int mSeriesNumber;
     private ArrayList<ArrayList<Integer>> mSeriesInteger; //これ初期化しなくていい気がする
     private HashMap<Integer, String> mIDMap = new HashMap<>();
+    private final int k_NUMBER = 10000;
 
     public Goals(String[] aIDs) {
         mIDs = aIDs;
@@ -35,9 +37,19 @@ public class Goals {
         mNumberInLine = 0;
     }
 
+
+    /**
+     * 探索を行う系列をランダムに決定
+     */
+    public void randomSet() {
+        int tRandom = (int) (Math.random() * k_NUMBER) % mSeriesInteger.size();
+        mSeriesNumber = tRandom;
+        mNumberInLine = 0;
+    }
+
     /**
      * どの系列からアプローチするかの決定則が実装されている
-     *
+     * <p>
      * この決定則に自由度を持たせるなら、permutationでの実装は微妙
      */
     private void setSeriesNumber() {
@@ -48,7 +60,7 @@ public class Goals {
         return mCurrentID;
     }
 
-    public void setNextTarget(){
+    public void setNextTarget() {
         mNumberInLine++;
         int tNumber = mSeriesInteger.get(mSeriesNumber).get(mNumberInLine);
         mCurrentID = mIDMap.get(tNumber);
@@ -56,11 +68,11 @@ public class Goals {
 
     /**
      * 別の系列を呼び出す
-     *
+     * <p>
      * 現在の系列で推論がうまくいかなった場合に読み出される
      */
     //系列の決め方ももう少し自由度をつける方が良い
-    public void setNewSeiries(){
+    public void setNewSeiries() {
         mSeriesNumber++;
         mNumberInLine = 0;
         int tNumber = mSeriesInteger.get(mSeriesNumber).get(mNumberInLine);
@@ -68,11 +80,9 @@ public class Goals {
     }
 
     /**
-     *
-     * @return
-     * いるかどうかわからんけど一応。
+     * @return いるかどうかわからんけど一応。
      */
-    public String getNextTarget(){
+    public String getNextTarget() {
         setNextTarget();
         return getCurrentTarget();
     }
