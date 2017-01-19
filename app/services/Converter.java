@@ -8,8 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
 import java.io.IOException;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +49,7 @@ public class Converter {//自然言語の入力に対して、順序構造を表
         put("左", "右");
     }};
     static String justRegex = "ちょうど|真";
-    static String path = "src\\natural\\language\\Block2.json";
+    static String path = "app\\services\\Block2.json";
 
     ArrayList<String> getObjList(ArrayList<String> arg_tgtStateS) {
         ArrayList<String> list = new ArrayList<String>();
@@ -444,7 +442,7 @@ public class Converter {//自然言語の入力に対して、順序構造を表
 
     public static void main(String args[]) {
         ArrayList<Integer> space = new ArrayList<Integer>();
-        ArrayList<Block2> blockList = new ArrayList<>();
+        ArrayList<Block2> blockList = new ArrayList<Block2>();
         ArrayList<String> orderInputS = new ArrayList<String>();
         Converter conv = new Converter();
         //conv.readJSON(space,blockList,orderInputS);
