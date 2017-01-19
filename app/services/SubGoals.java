@@ -25,6 +25,8 @@ public class SubGoals {
     }
 
     /**
+     * 今着目しているNodeに記録されているSpaceを取り出す
+     *
      * @return
      */
     public Space getCurrentSpace() {
@@ -32,14 +34,13 @@ public class SubGoals {
     }
 
     /**
-     *
      * @param aSpaces 一番目から優先順位の高いデータが入っているとする
      */
-    public void putSpaces(ArrayList<Space> aSpaces){
+    public void putSpaces(ArrayList<Space> aSpaces) {
 
         ArrayList<Node> tChildren = new ArrayList<>();
 
-        for(int i = 0; i < aSpaces.size(); i++){
+        for (int i = 0; i < aSpaces.size(); i++) {
             Space tSpace = aSpaces.get(i);
             Node tChild = new Node(mCurrentNode, tSpace, i);
             tChildren.add(tChild);
@@ -77,23 +78,34 @@ public class SubGoals {
 
     /**
      * 現在のノードから、backTrackで通過した系列をListとして返却
-     * @return
-     * 関数の終了後も、木構造におけるmCurrentNodeの位置に変化はない
+     *
+     * @return 関数の終了後も、木構造におけるmCurrentNodeの位置に変化はない
      */
     public ArrayList<Space> getSubSeries() {
         ArrayList<Space> tSeries = new ArrayList<>();
         Node tMoveNode = mCurrentNode;
 
         tSeries.add(tMoveNode.getSpace());
-        while(true){
+        while (true) {
 
             if (Objects.equals(tMoveNode.getParentNode(), null)) {
                 break;
             }
             tMoveNode = tMoveNode.getParentNode();
-            tSeries.add(0,tMoveNode.getSpace()); //先頭に要素を追加
+            tSeries.add(0, tMoveNode.getSpace()); //先頭に要素を追加
         }
         return tSeries;
+    }
+
+
+    /**
+     * 要実装 sub木構造で今まで連続して動かしてきたBlockの名前の系列が渡される
+     *
+     * @return
+     */
+    public ArrayList<String> getBlockSeries() {
+        return null;
+
     }
 
 }
