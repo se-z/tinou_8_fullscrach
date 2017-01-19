@@ -1,9 +1,30 @@
 {
-  "space":["int", "int"],
-  "blocks":[
-    {"id":"String", "shape":"String", "coodinate":["int", "int"],"heavy":"boolean", "color":""},
+  "X": [
+    "int min",
+    "int max"
+  ],
+  "Y": [
+    "int min",
+    "int max"
+  ],
+  "blocks": [
+    {
+      "id": "String",
+      "shape": "String",
+      "coodinate": [
+        "int",
+        "int"
+      ],
+      "heavy": "boolean",
+      "color": ""
+    },
     {},
     {}
   ],
-  "order":["String","String","String",,,,,,]
+  "order": [
+    "String",
+    "String",
+    "String",
+    ,,,,,
+  ]
 }
