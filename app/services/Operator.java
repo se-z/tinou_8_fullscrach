@@ -67,51 +67,51 @@ public abstract class Operator {
             int tY = aCurrentSpace.getTopY(tX);
 
             if (!Objects.equals(tID, null) && mBlocks.get(tID).canBeOn()) {
-            	int[] tPlaceblePosition={tX,tY};
+                int[] tPlaceblePosition = {tX, tY};
                 tPlaceableSpace.add(tPlaceblePosition);
                 continue;
             }
 
             //Blockがない場合
             for (int y = tY; y >= mYmin; y--) {
-            	int[] tPlaceblePosition={tX,y};
+                int[] tPlaceblePosition = {tX, y};
                 tPlaceableSpace.add(tPlaceblePosition);
             }
         }
 
 
         ArrayList<int[]> tMoveable = new ArrayList<>();
-        if(mBlocks.get(tMovingBlockID).isHeavy()){
-        	//重いBlockの場合
-        	for (int[] tPlaceable : tPlaceableSpace) {
-        		int tX = tPlaceable[0];
-        		int tY = tPlaceable[1];
-        		int[] tGoal = {tX, tY};
+        if (mBlocks.get(tMovingBlockID).isHeavy()) {
+            //重いBlockの場合
+            for (int[] tPlaceable : tPlaceableSpace) {
+                int tX = tPlaceable[0];
+                int tY = tPlaceable[1];
+                int[] tGoal = {tX, tY};
 
 
-        		if (aCurrentSpace.getPosition(tMovingBlockID)[0] < tY) {
-        			continue;
-        		}
-        		if (!canSlideThrough(aCurrentSpace.getPosition(tMovingBlockID), tGoal, aCurrentSpace)) {
-        			continue;
-        		}
+                if (aCurrentSpace.getPosition(tMovingBlockID)[0] < tY) {
+                    continue;
+                }
+                if (!canSlideThrough(aCurrentSpace.getPosition(tMovingBlockID), tGoal, aCurrentSpace)) {
+                    continue;
+                }
 
-        		tMoveable.add(tGoal);
-        	}
+                tMoveable.add(tGoal);
+            }
         }
         //軽いBlockの場合
-        else tMoveable=tPlaceableSpace;
+        else tMoveable = tPlaceableSpace;
 
-        ArrayList<Space> tSpaceAfterMove=new ArrayList<>();
+        ArrayList<Space> tSpaceAfterMove = new ArrayList<>();
         //移動可能な座標リストから、移動後のSpaceのリストを生成
-        for(int[] tNewPosition:tMoveable){
-        	Space tNewSpace=aCurrentSpace.cloneSpace();
-        	tNewSpace.setBlockCloneSpace(tMovingBlockID, tNewPosition[0], tNewPosition[1]);
-        	tSpaceAfterMove.add(tNewSpace);
+        for (int[] tNewPosition : tMoveable) {
+            Space tNewSpace = aCurrentSpace.cloneSpace();
+            tNewSpace.setBlockCloneSpace(tMovingBlockID, tNewPosition[0], tNewPosition[1]);
+            tSpaceAfterMove.add(tNewSpace);
         }
 
         //評価関数の戻り値を返却
-        return evaluateSpace(tSpaceAfterMove,aSubTargetBlockID);
+        return evaluateSpace(tSpaceAfterMove, aSubTargetBlockID);
     }
 
     /**
@@ -147,15 +147,15 @@ public abstract class Operator {
                 }
                 return false;
             }
-            
 
-            String tID=aSpace.getTopBlockID(x);
-            if(Objects.equals(tID, null)){
-            	continue;
+
+            String tID = aSpace.getTopBlockID(x);
+            if (Objects.equals(tID, null)) {
+                continue;
             }
-            Block tBlock=mBlocks.get(tID);
-            if(tBlock.canBeOn()){
-            	continue;
+            Block tBlock = mBlocks.get(tID);
+            if (tBlock.canBeOn()) {
+                continue;
             }
 
             return false;
