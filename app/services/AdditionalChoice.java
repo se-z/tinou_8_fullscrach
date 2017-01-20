@@ -8,6 +8,7 @@ public class AdditionalChoice {
 
 	//評価関数で使用するパラメータ
 	//コメントの最後に示す式の値を加算する(kは変数名の略称)
+	//加点減点にかかわらず値は加算されるので、減点するときはパラメータを負の値にする
 	//副目標のブロック,副目標のブロックの目標地点　 +(近いほうの距離×k)減点
 	static final int kPointDistance;
 	//x座標が、副目標のブロックの現在座標または目標座標と等しいなら　+(k)加点
@@ -22,6 +23,9 @@ public class AdditionalChoice {
 	static final int kPointIsHeavy;
 	//地中にあるなら +(穴の深さ×k)減点
 	static final int kPointUnderground;
+	
+	//評価値に加えられる乱数の最大値　+(0～k)
+	static final int kPointRandom;
 	
     /**
      * 次に移動させるBlockを乱数を含む評価関数を用いて決定する
@@ -79,7 +83,7 @@ public class AdditionalChoice {
      * @param aSubTargetBlock
      * @return
      */
-    public int evaluationFunction(String aBlockID,Space aCurrentSpace, Space aTargetSpace, HashMap<String,Block> aBlocks,String aSubTargetBlock){
+    public static int evaluationFunction(String aBlockID,Space aCurrentSpace, Space aTargetSpace, HashMap<String,Block> aBlocks,String aSubTargetBlock){
     	int tValue=0;
     	
     	//評価を行う
@@ -116,6 +120,9 @@ public class AdditionalChoice {
     	if(tY<0){
     		tValue+=-tY*kPointUnderground;
     	}
+    	
+		//乱数を加算
+		tValue+=(int)(Math.random()*kPointRandom);
     	
     	return tValue;
     }

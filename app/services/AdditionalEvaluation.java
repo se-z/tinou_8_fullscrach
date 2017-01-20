@@ -11,6 +11,7 @@ public class AdditionalEvaluation {
 	
 	//評価関数で使用するパラメータ
 	//コメントの最後に示す式の値を加算する(kは変数名の略称)
+	//加点減点にかかわらず値は加算されるので、減点するときはパラメータを負の値にする
 	//地中にあるなら　+(穴の深さ×k)減点
 	static final int kPointUnderground;
 	
@@ -40,6 +41,9 @@ public class AdditionalEvaluation {
 	static final int kPointHighThanTarget;
 	//移動するブロックの座標が副目標のブロックより低い　+(k)加点
 	static final int kPointLowThanTarget;
+	
+	//評価値に加えられる乱数の最大値　+(0～k)
+	static final int kPointRandom;
 	
 	/**
 	 * @param aSpaceList 評価するSpaceのリスト
@@ -92,7 +96,7 @@ public class AdditionalEvaluation {
 	 * @param aChosenBlockID 移動したブロックのID
 	 * @return
 	 */   
-	public int evaluateTarget(Space aSpace,Space aTargetSpace,String aChosenBlockID){
+	public static int evaluateTarget(Space aSpace,Space aTargetSpace,String aChosenBlockID){
 		int tValue=0;
 		int[] tAfterMovePosition=aSpace.getPosition(aChosenBlockID);//移動するブロック（=副目標のブロック）の移動後の座標
 		int[] tTargetPosition=aTargetSpace.getPosition(aChosenBlockID);//移動するブロック（=副目標のブロック）の目標地点
@@ -115,6 +119,9 @@ public class AdditionalEvaluation {
 		if(tAfterMovePosition[1]<0)
 			tValue+=-tAfterMovePosition[1]*kPointUnderground;
 		
+		//乱数を加算
+		tValue+=(int)(Math.random()*kPointRandom);
+		
 		return tValue;
 	}
 	/**
@@ -126,7 +133,7 @@ public class AdditionalEvaluation {
 	 * @param aCanBeOn 移動したブロックは上にブロックをのせられるか（true:乗せられる　false:乗せられない）
 	 *  @return
 	 */
-	public int evaluateNotTarget(Space aSpace,Space aTargetSpace,String aChosenBlockID,String aSubTargetBlockID,boolean aCanBeOn){
+	public static int evaluateNotTarget(Space aSpace,Space aTargetSpace,String aChosenBlockID,String aSubTargetBlockID,boolean aCanBeOn){
 		int tValue=0;
 		int[] tAfterMovePosition=aSpace.getPosition(aChosenBlockID);//移動するブロックの移動後の座標
 		int[] tTargetGoalPosition=aTargetSpace.getPosition(aSubTargetBlockID);//副目標のブロックの目標地点
@@ -158,6 +165,9 @@ public class AdditionalEvaluation {
 		//地中にあるか評価
 		if(tAfterMovePosition[1]<0)
 			tValue+=-tAfterMovePosition[1]*kPointUnderground;
+		
+		//乱数を加算
+		tValue+=(int)(Math.random()*kPointRandom);
 		
 		return tValue;
 	}

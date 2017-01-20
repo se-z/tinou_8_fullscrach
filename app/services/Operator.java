@@ -206,9 +206,10 @@ public abstract class Operator {
      * 評価関数
      *
      * @param tSpace       評価するSpaceのリスト
+     * @param aChosenBlockID 移動したブロックのID
      * @param aRootBlockID 副目標として設定されているブロック
      * @return
      */
-    abstract protected Space[] evaluateSpace(ArrayList<Space> tSpace, String aChosenBlockID, String aSubTargetBlockID);
+    abstract protected Space[] evaluateSpace(ArrayList<Space> aSpace, String aChosenBlockID, String aSubTargetBlockID);
 
 }

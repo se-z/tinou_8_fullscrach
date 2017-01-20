@@ -16,7 +16,7 @@ public class RandomOperator extends Operator {
 	}
 
 	@Override
-	protected Space[] evaluateSpace(ArrayList<Space> aSpace, String aChosenBlockID String aSubTargetBlockID) {
+	protected Space[] evaluateSpace(ArrayList<Space> aSpace, String aChosenBlockID, String aSubTargetBlockID) {
 		return RandomEvaluation.evaluateSpace(aSpace, aSubTargetBlockID);
 	}
 }
