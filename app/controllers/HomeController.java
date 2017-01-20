@@ -1,6 +1,9 @@
 package controllers;
+
 import services.*;
+
 import java.util.ArrayList;
+
 import play.mvc.*;
 import views.html.*;
 
@@ -10,15 +13,11 @@ import views.html.*;
  */
 public class HomeController extends Controller {
 
-    /**
-     * An action that renders an HTML page with a welcome message.
-     * The configuration in the <code>routes</code> file means that
-     * this method will be called when the application receives a
-     * <code>GET</code> request with a path of <code>/</code>.
-     */
+
     public Result index() {
 
-        // activator run ->
+        // activator run -> http://localhost:9000 -> index()が実行される
+        // このクラスでテストする
 
 //		Target tgt = new Target();
 //        ArrayList<Space> answer = tgt.getTargetList2();
