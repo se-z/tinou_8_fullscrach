@@ -2,6 +2,7 @@ package services;
 
 /**
  * Created by seijihagawa on 2017/01/12.
+ * package services;
  */
 
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import java.lang.Math;
  * targetにするblockの処理の順序を管理する
  * <p>
  * mIDMap 系列はすべてint型の番号で管理しているのでIDとmappingさせるためのmap
+ * mIDMap : {[1,A], [2,B], [3,C],,,}
+ * <p>
+ * 動作確認済み
  */
 public class Goals {
     private String[] mIDs;
@@ -20,48 +24,59 @@ public class Goals {
     private int mNumberInLine;
     private int mSeriesNumber;
     private ArrayList<ArrayList<Integer>> mSeriesListInteger; //これ初期化しなくていい気がする
-    private HashMap<Integer, String> mIDMap = new HashMap<>();
+    private HashMap<Integer, String> mIDMap;
     private final int k_NUMBER = 10000;
+    private ArrayList<Integer> mFalseSeries;
 
     public Goals(String[] aIDs) {
         mIDs = aIDs;
-        //Permutation tPerm = new Permutation();
-        //tPerm.doPermutation(mIDs.length);
-        //mSeriesListInteger = tPerm.getNumberList();
-
+        mIDMap = new HashMap<>();
         mSeriesListInteger = permutation(mIDs.length);
-        //これ何やってんだ？
+
+        //String型のIDとInt型の系列リストを紐付けている
         for (int i = 1; i <= mIDs.length; i++) {
             mIDMap.put(i, mIDs[i - 1]);
         }
 
-        setSeriesNumber();
-        mNumberInLine = 0;
-
-        //test
-        System.out.println(mSeriesListInteger.size());
-        for (int i = 0; i < mSeriesListInteger.size(); i++) {
-            System.out.println(mSeriesListInteger.get(i));
-        }
-    }
-
-
-    /**
-     * 探索を行う系列をランダムに決定
-     */
-    public void randomSet() {
-        int tRandom = (int) (Math.random() * k_NUMBER) % mSeriesListInteger.size();
-        mSeriesNumber = tRandom;
-        mNumberInLine = 0;
-    }
-
-    /**
-     * どの系列からアプローチするかの決定則が実装されている
-     * <p>
-     * この決定則に自由度を持たせるなら、permutationでの実装は微妙
-     */
-    private void setSeriesNumber() {
         mSeriesNumber = 0;
+        mNumberInLine = 0;
+        mFalseSeries = new ArrayList<>();
+
+
+    }
+
+
+    /**
+     * 失敗した系列を登録し、探索を行う系列をランダムに決定、最初のノードを指定する
+     */
+    public void randomSetSeries() {
+
+        if (!mFalseSeries.isEmpty()) {
+            int tPrevNumber = mSeriesNumber;
+            mFalseSeries.add(tPrevNumber);
+        }
+
+        int tRandom;
+        do {
+            tRandom = (int) (Math.random() * k_NUMBER) % mSeriesListInteger.size();
+        } while (mSeriesNumber == tRandom);
+
+        //値の更新
+        this.setSeriesNumber(tRandom);
+        this.setNumberInLine(0);
+        this.setCurrentID(mSeriesListInteger.get(tRandom).get(0));
+    }
+
+    private void setCurrentID(int aNum) {
+        mCurrentID = mIDMap.get(aNum);
+    }
+
+    private void setNumberInLine(int aNum) {
+        mNumberInLine = aNum;
+    }
+
+    private void setSeriesNumber(int aNum) {
+        mSeriesNumber = aNum;
     }
 
     public String getCurrentTarget() {
@@ -70,56 +85,45 @@ public class Goals {
 
     public void setNextTarget() {
         mNumberInLine++;
+        int tListSize = mSeriesListInteger.get(0).size();
+
+        if (mNumberInLine > tListSize) {
+            throw new IndexOutOfBoundsException();
+        }
+
         int tNumber = mSeriesListInteger.get(mSeriesNumber).get(mNumberInLine);
         mCurrentID = mIDMap.get(tNumber);
     }
 
-    /**
-     * 別の系列を呼び出す
-     * <p>
-     * 現在の系列で推論がうまくいかなった場合に読み出される
-     */
-    //系列の決め方ももう少し自由度をつける方が良い
-    public void setNewSeiries() {
-        mSeriesNumber++;
-        mNumberInLine = 0;
-        int tNumber = mSeriesListInteger.get(mSeriesNumber).get(mNumberInLine);
-        mCurrentID = mIDMap.get(tNumber);
-    }
 
     /**
-     * @return いるかどうかわからんけど一応。
+     * 指定された数字の順列の総組み合わせを返す
+     *
+     * @param aNumber
+     * @return permutationの
      */
-    public String getNextTarget() {
-        setNextTarget();
-        return getCurrentTarget();
-    }
-
-
     private static ArrayList<ArrayList<Integer>> permutation(Integer aNumber) {
-        int tN = aNumber;
+        int tNumber = aNumber;
 
-        if (tN < 0)
-            return null;
+        if (tNumber == 0) {
+            ArrayList<Integer> tList = new ArrayList<>();
+            ArrayList<ArrayList<Integer>> tNullList = new ArrayList<>();
+            tNullList.add(tList);
+            return tNullList;
+        }
 
         ArrayList<ArrayList<Integer>> results = new ArrayList<>();
-        if (tN == 0) {
-            ArrayList<Integer> tList = new ArrayList<>();
-            results.add(tList);
-            return results;
-        }
+        ArrayList<ArrayList<Integer>> tPrevResults = permutation(tNumber - 1);
 
-        ArrayList<ArrayList<Integer>> tPrevResults = permutation(tN - 1);
-        for (ArrayList<Integer> tPerm : tPrevResults) {
-            for (int i = 0; i <= tN; ++i) {    // n を加える位置についてのループ
-                tPerm.add(i, tN);
-                results.add(new ArrayList<>(tPerm));
-                tPerm.remove(tN);
+        for (ArrayList<Integer> tPrev : tPrevResults) {
+            for (int i = 0; i < aNumber; ++i) {
+                ArrayList<Integer> tBuf = new ArrayList<>(tPrev);
+                tBuf.add(i, tNumber);
+                results.add(new ArrayList<>(tBuf));
             }
-            tPerm.clear();     // 全要素を削除しておく これいる？
         }
-        tPrevResults.clear();     // 全要素を削除しておく これいる？
 
         return results;
     }
+
 }
