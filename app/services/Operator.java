@@ -88,10 +88,15 @@ public abstract class Operator {
                 int tY = tPlaceable[1];
                 int[] tGoal = {tX, tY};
 
+                //目標空間よりも低い位置に、重たいブロックをおいたら、その時点で、解は達成されなくなる
+                if (tY < mTargetSpace.getPosition(tMovingBlockID)[1]) {
+                    continue;
+                }
 
                 if (aCurrentSpace.getPosition(tMovingBlockID)[0] < tY) {
                     continue;
                 }
+
                 if (!canSlideThrough(aCurrentSpace.getPosition(tMovingBlockID), tGoal, aCurrentSpace)) {
                     continue;
                 }

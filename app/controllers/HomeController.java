@@ -17,12 +17,21 @@ public class HomeController extends Controller {
      * <code>GET</code> request with a path of <code>/</code>.
      */
     public Result index() {
-		Target tgt = new Target();
-        ArrayList<Space> answer = tgt.getTargetList2();
-		String dir = System.getProperty("user.dir");
-		System.out.println("CyrrentDirectry=： " + dir);
-		return ok(index.render(answer.toString()));
-        //return ok(index.render("Your new application is ready."));
+
+        // activator run ->
+
+//		Target tgt = new Target();
+//        ArrayList<Space> answer = tgt.getTargetList2();
+//		String dir = System.getProperty("user.dir");
+//		System.out.println("CyrrentDirectry=： " + dir);
+//		return ok(index.render(answer.toString()));
+
+        String[] str = {"A", "B", "c"};
+        System.out.println("Goals初期化");
+        Goals tG = new Goals(str);
+        System.out.println("初期化完了");
+
+        return ok(index.render("Your new application is ready."));
     }
 
 }
