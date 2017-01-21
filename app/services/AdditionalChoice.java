@@ -10,22 +10,22 @@ public class AdditionalChoice {
     //コメントの最後に示す式の値を加算する(kは変数名の略称)
     //加点減点にかかわらず値は加算されるので、減点するときはパラメータを負の値にする
     //副目標のブロック,副目標のブロックの目標地点　 +(近いほうの距離×k)減点
-    static final int kPointDistance = 5;
+    static final int kPointDistance = -1;
     //x座標が、副目標のブロックの現在座標または目標座標と等しいなら　+(k)加点
-    static final int kPointOnTargetPosition = 5;
-    //副目標のブロックより高い位置にあるなら　+(k)加点
-    static final int kPointHighThanTarget = 5;
+    static final int kPointOnTargetPosition = 2;
+    //副目標のブロックより高いor同じ高さの位置にあるなら　+(k)加点
+    static final int kPointHighThanTarget = 1;
     //副目標のブロックより低い位置にあり、ブロックを乗せられるなら　+(k)減点
-    static final int kPointCanBeOn = 5;
+    static final int kPointCanBeOn = 2;
     //副目標のブロックより低い位置にあり、ブロックを乗せられないなら　+(k)加点
-    static final int kPointCannotBeOn = 5;
+    static final int kPointCannotBeOn = 2;
     //重いブロックなら　+(k)減点
-    static final int kPointIsHeavy = 5;
+    static final int kPointIsHeavy = -2;
     //地中にあるなら +(穴の深さ×k)減点
-    static final int kPointUnderground = 5;
+    static final int kPointUnderground = -1;
 
     //評価値に加えられる乱数の最大値　+(0～k)
-    static final int kPointRandom = 5;
+    static final int kPointRandom = 10;
 
     /**
      * 次に移動させるBlockを乱数を含む評価関数を用いて決定する
@@ -47,7 +47,7 @@ public class AdditionalChoice {
             if (Objects.equals(tBlockID, null)) {
                 continue;
             }
-            if (tBlockID.equals(aSeries.get(aSeries.size() - 1))) {//最後に移動させたブロックは選択しない
+            if (aSeries.size() > 0 && tBlockID.equals(aSeries.get(aSeries.size() - 1))) {//最後に移動させたブロックは選択しない
                 continue;
             }
 
@@ -67,7 +67,7 @@ public class AdditionalChoice {
                 tMaxValue = tEvaluation.getValue();
                 tChosenBlock = tEvaluation.getKey();
             }
-            if (tEvaluation.getValue() < tMaxValue) {
+            if (tEvaluation.getValue() > tMaxValue) {
                 tMaxValue = tEvaluation.getValue();
                 tChosenBlock = tEvaluation.getKey();
             }
@@ -98,8 +98,10 @@ public class AdditionalChoice {
         int tDistance = Math.abs(tTargetGoalPosition[0] - tChosenPosition[0]);//副目標のブロックの目標地点の座標とのx方向の距離
         if (tDistance > Math.abs(tTargetCurrentPosition[0] - tChosenPosition[0]))
             tDistance = Math.abs(tTargetCurrentPosition[0] - tChosenPosition[0]);//副目標のブロックの現在の座標とのx方向の距離
-        if (tDistance == 0) tValue += kPointOnTargetPosition;//距離が0なら加点
-        else tValue += tDistance * kPointDistance;//遠いほど減点
+        if (tDistance == 0) //距離が0
+            if (!(tChosenPosition[0] == tTargetGoalPosition[0] && tChosenPosition[1] < tTargetGoalPosition[1]))//副目標のブロックの目標地点の下にあるなら加点しない
+                tValue += kPointOnTargetPosition;
+            else tValue += tDistance * kPointDistance;//遠いほど減点
 
         //y座標の評価
         if (tChosenPosition[1] >= tTargetCurrentPosition[1]) {//副目標のブロックより高いor同じ高さ

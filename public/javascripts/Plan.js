@@ -513,10 +513,11 @@ function PrepareAjax(){
 
     $.ajax({
       type: "POST",
-      url: "run",
+      url: "run/",
       dataType: "json",
+      contentType:"application/json",
       cache: false,
-      async: false,       //warningが出るが、ここをfalseにしないと正しく挙動しない
+      async: false,
       data: JSONdata,
     }).done(function (data) {
       console.log("done");

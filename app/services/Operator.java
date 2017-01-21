@@ -48,7 +48,7 @@ public abstract class Operator {
      * @return 移動できる座標がない場合は、空のspace配列を返却
      * @throws CloneNotSupportedException
      */
-    public Space[] findPositions(Space aCurrentSpace, ArrayList<String> aSeries, String aSubTargetBlockID) throws CloneNotSupportedException {
+    public Space[] findPositions(Space aCurrentSpace, ArrayList<String> aSeries, String aSubTargetBlockID) {
 
         String tMovingBlockID = choiceBlock(aCurrentSpace, aSeries, aSubTargetBlockID);
         if (Objects.equals(tMovingBlockID, null)) {
@@ -66,9 +66,14 @@ public abstract class Operator {
             String tID = aCurrentSpace.getTopBlockID(tX);
             int tY = aCurrentSpace.getTopY(tX);
 
-            if (!Objects.equals(tID, null) && mBlocks.get(tID).canBeOn()) {
-                int[] tPlaceblePosition = {tX, tY};
-                tPlaceableSpace.add(tPlaceblePosition);
+            if (!Objects.equals(tID, null)) {
+                if (tID.equals(tMovingBlockID)) {//移動させるブロックの真上
+                    continue;
+                }
+                if (mBlocks.get(tID).canBeOn()) {
+                    int[] tPlaceblePosition = {tX, tY};
+                    tPlaceableSpace.add(tPlaceblePosition);
+                }
                 continue;
             }
 
@@ -178,36 +183,14 @@ public abstract class Operator {
      * 返却値はObjects.equals(o1, o2):booleanでcheckする
      */
     abstract public String choiceBlock(Space aCurrentSpace, ArrayList<String> aSeries, String aSubTargetBlock);
-//    {
-//        //目標地点を受け取る
-//        int[] tTargetPosition = mTargetSpace.getPosition(aRootBlockID);
-//
-//        //目標地点にブロックがあるなら、そのブロックかその上にあるブロック
-//        int tHeight = aCurrentSpace.getTopY(tTargetPosition[0]);
-//        if (tTargetPosition[1] < tHeight) {
-//            String tBelowBlock = aCurrentSpace.getBlockID(tTargetPosition[0], tHeight - 1);//目標地点の最も上にあるブロック
-//            if (tBelowBlock != null) {
-//                return tBelowBlock;
-//            }
-//        }
-//
-//        //副目標に設定されているブロックの上にブロックがあるならそのブロック
-//        int[] tNowPosition = aCurrentSpace.getPosition(aRootBlockID);//副目標に設定されているブロックの座標
-//        tHeight = aCurrentSpace.getTopY(tNowPosition[0]);
-//        if (tNowPosition[1] < tHeight - 1) {
-//            return aCurrentSpace.getBlockID(tNowPosition[0], tHeight - 1);
-//        }
-//
-//        //副目標に設定されているブロック
-//        return aRootBlockID;
-//    }
+
 
     /**
      * 評価関数
      *
-     * @param tSpace       評価するSpaceのリスト
-     * @param aChosenBlockID 移動したブロックのID
-     * @param aRootBlockID 副目標として設定されているブロック
+     * @param aSpace            評価するSpaceのリスト
+     * @param aChosenBlockID    移動したブロックのID
+     * @param aSubTargetBlockID 副目標として設定されているブロック
      * @return
      */
     abstract protected Space[] evaluateSpace(ArrayList<Space> aSpace, String aChosenBlockID, String aSubTargetBlockID);

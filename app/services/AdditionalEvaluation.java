@@ -14,37 +14,39 @@ public class AdditionalEvaluation {
     //コメントの最後に示す式の値を加算する(kは変数名の略称)
     //加点減点にかかわらず値は加算されるので、減点するときはパラメータを負の値にする
     //地中にあるなら　+(穴の深さ×k)減点
-    static final int kPointUnderground = 5;
+    static final int kPointUnderground = -20;
 
     //移動するブロックが副目標のブロック
     //x座標が目標地点と同じ、かつ、y座標が目標地点より高い　+(k)減点
-    static final int kSPointHigh = 5;
+    static final int kSPointHigh = -20;
     //xy共に目標地点と同じ　+(k)加点（多めにする）
-    static final int kSPointSame = 5;
+    static final int kSPointSame = 20;
     //x座標が目標地点と同じ、かつ、y座標が目標地点より低い　+(k)減点
-    static final int kSPointLow = 5;
+    static final int kSPointLow = -20;
     //目標地点との距離　+(目標地点とのx方向の距離×k)減点
-    static final int kSPointNearX = 5;
+    static final int kSPointNearX = -10;
 
 
     //移動するブロックが副目標のブロック以外
+    //副目標のブロックの上に置くなら　+(k)
+    static final int kPointOnTargetBlock = -40;
     //x座標が目標地点と同じ、かつ、y座標が目標地点より高い　+(k)減点
-    static final int kPointHigh = 5;
+    static final int kPointHigh = -20;
     //xy共に目標地点と同じ　+(k)減点
-    static final int kPointSame = 5;
+    static final int kPointSame = -20;
     //x座標が目標地点と同じ、かつ、y座標が目標地点より低い　+(k)加点
-    static final int kPointLow = 5;
+    static final int kPointLow = 15;
     //移動するブロックが上にブロックを乗せられるなら　 +(副目標のブロックとのx方向の距離×k)減点
-    static final int kPointCanBeOn = 5;
+    static final int kPointCanBeOn = -5;
     //移動するブロックが上にブロックを乗せられないなら　 +(副目標のブロックとのx方向の距離×k)加点
     static final int kPointCannotBeOn = 5;
     //移動するブロックの座標が副目標のブロックより高いor同じ　+(k)減点
-    static final int kPointHighThanTarget = 5;
+    static final int kPointHighThanTarget = -15;
     //移動するブロックの座標が副目標のブロックより低い　+(k)加点
-    static final int kPointLowThanTarget = 5;
+    static final int kPointLowThanTarget = 15;
 
     //評価値に加えられる乱数の最大値　+(0～k)
-    static final int kPointRandom = 5;
+    static final int kPointRandom = 10;
 
     /**
      * @param aSpaceList        評価するSpaceのリスト
@@ -113,9 +115,9 @@ public class AdditionalEvaluation {
                 tValue += kSPointSame;
             else//低い
                 tValue += kSPointLow;
-        } else {//x座標が目標地点と異なる
-            tValue += Math.abs(tAfterMovePosition[0] - tTargetPosition[0]) * kSPointNearX;
         }
+        //x座標が目標地点と異なる
+        tValue += Math.abs(tAfterMovePosition[0] - tTargetPosition[0]) * kSPointNearX;
 
         //地中にあるか評価
         if (tAfterMovePosition[1] < 0)
@@ -141,9 +143,12 @@ public class AdditionalEvaluation {
         int tValue = 0;
         int[] tAfterMovePosition = aSpace.getPosition(aChosenBlockID);//移動するブロックの移動後の座標
         int[] tTargetGoalPosition = aTargetSpace.getPosition(aSubTargetBlockID);//副目標のブロックの目標地点
-        int[] tTargetCurrentPosition = aTargetSpace.getPosition(aSubTargetBlockID);//副目標のブロックの現在の座標
+        int[] tTargetCurrentPosition = aSpace.getPosition(aSubTargetBlockID);//副目標のブロックの現在の座標
 
         //x座標の評価
+        //副目標のブロックの上
+        if (tAfterMovePosition[0] == tTargetCurrentPosition[0] && tAfterMovePosition[1] > tTargetCurrentPosition[1])
+            tValue += kPointOnTargetBlock;
         if (tAfterMovePosition[0] == tTargetGoalPosition[0]) {//x座標が副目標のブロックの目標地点と等しい場合の評価
             //目標地点よりy座標が
             if (tAfterMovePosition[1] > tTargetGoalPosition[1])//高い
@@ -152,18 +157,18 @@ public class AdditionalEvaluation {
                 tValue += kPointSame;
             else//低い
                 tValue += kPointLow;
-        } else {//x座標が目標地点と異なる
-            int tDistance = Math.abs(tAfterMovePosition[0] - tTargetGoalPosition[0]);
-            if (aCanBeOn)//移動するブロックが上にブロックを乗せられるか
-                tValue += tDistance * kPointCanBeOn;
-            else
-                tValue += tDistance * kPointCannotBeOn;
-
-            if (tAfterMovePosition[1] >= tTargetGoalPosition[1])//副目標のブロックより高い
-                tValue += kPointHighThanTarget;
-            else//副目標のブロックより低い
-                tValue += kPointLowThanTarget;
         }
+        //x座標が目標地点と異なる
+        int tDistance = Math.abs(tAfterMovePosition[0] - tTargetCurrentPosition[0]);
+        if (aCanBeOn)//移動するブロックが上にブロックを乗せられるか
+            tValue += tDistance * kPointCanBeOn;
+        else
+            tValue += tDistance * kPointCannotBeOn;
+
+        if (tAfterMovePosition[1] >= tTargetCurrentPosition[1])//副目標のブロックより高い
+            tValue += kPointHighThanTarget;
+        else//副目標のブロックより低い
+            tValue += kPointLowThanTarget;
 
         //地中にあるか評価
         if (tAfterMovePosition[1] < 0)

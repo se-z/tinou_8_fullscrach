@@ -1,7 +1,6 @@
 package controllers;
 
-import services.*;
-import java.util.ArrayList;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import play.mvc.*;
 import views.html.*;
@@ -33,9 +32,12 @@ public class HomeController extends Controller {
     }
 
 
-    public Result run(){
+    public Result run() {
         System.out.println("############  run!!  ############");
-        System.out.println(request().body().asJson());
+
+        JsonNode json = request().body().asJson();
+        System.out.println(json);
+
         return ok();
     }
 
