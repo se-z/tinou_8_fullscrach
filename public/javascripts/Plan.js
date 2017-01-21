@@ -513,7 +513,7 @@ function PrepareAjax(){
 
     $.ajax({
       type: "POST",
-      url: "/chain/",
+      url: "run",
       dataType: "json",
       cache: false,
       async: false,       //warningが出るが、ここをfalseにしないと正しく挙動しない

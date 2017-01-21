@@ -1,7 +1,6 @@
 package controllers;
 
 import services.*;
-
 import java.util.ArrayList;
 
 import play.mvc.*;
@@ -25,12 +24,20 @@ public class HomeController extends Controller {
 //		System.out.println("CyrrentDirectry=： " + dir);
 //		return ok(index.render(answer.toString()));
 
-        String[] str = {"A", "B", "c"};
-        System.out.println("Goals初期化");
-        Goals tG = new Goals(str);
-        System.out.println("初期化完了");
+//        String[] str = {"A", "B", "c"};
+//        System.out.println("Goals初期化");
+//        Goals tG = new Goals(str);
+//        System.out.println("初期化完了");
 
         return ok(index.render("Your new application is ready."));
     }
+
+
+    public Result run(){
+        System.out.println("############  run!!  ############");
+        System.out.println(request().body().asJson());
+        return ok();
+    }
+
 
 }

@@ -1,5 +1,0 @@
-[
-    {"id":0, "Motion":"Put A on C", "Target":"A", "New":[1,2], "diffPlus":["A on C","clear A"], "diffMinus":["A is on floor","clear C"]},
-    {"id":1, "Motion":"Put D on A", "Target":"D", "New":[2,2], "diffPlus":["D on A","clear D"], "diffMinus":["D is on floor","clear A"]},
-    {"id":2, "Motion":"Put B on D", "Target":"B", "New":[3,2], "diffPlus":["B on D","clear B"], "diffMinus":["B is on floor","clear D"]}
-]
