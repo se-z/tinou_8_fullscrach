@@ -95,12 +95,11 @@ public class Goals {
         mCurrentID = mIDMap.get(tNumber);
     }
 
-
     /**
      * 指定された数字の順列の総組み合わせを返す
      *
      * @param aNumber
-     * @return permutationの
+     * @return 再帰を用いた実装で、オーバーヘッド大きいので変更を加えたいところ
      */
     private static ArrayList<ArrayList<Integer>> permutation(Integer aNumber) {
         int tNumber = aNumber;

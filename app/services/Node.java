@@ -19,9 +19,11 @@ public class Node {
     private int mThisIndex; //同じ親を共有するノードの通し番号
 
     //rootNodeの実装用
-    public Node() {
+    //初期状態はrootに持たせる
+    public Node(Space aSpace) {
         mFalseChildren = new ArrayList<>();
         mParentNode = null;
+        mSpace = aSpace;
     }
 
     /**
