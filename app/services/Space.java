@@ -335,4 +335,19 @@ public class Space {
         System.out.println("");
         System.out.println("Depth=" + mXDepth);
     }
+
+
+    public boolean isSame(Space aComp) {
+        for (HashMap.Entry<String, Position> tCompBlock : aComp.mBlocks.entrySet()) {
+
+            if (mBlocks.get(tCompBlock.getKey()).getX() != tCompBlock.getValue().getX()) {
+                return false;
+            }
+
+            if (mBlocks.get(tCompBlock.getKey()).getY() != tCompBlock.getValue().getY()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

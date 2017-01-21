@@ -4,17 +4,9 @@
  * and open the template in the editor.
  */
 package services;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import play.*;
-import play.mvc.*;
-import views.html.*;
 
 class Constraint{
     String mID;
@@ -434,7 +426,7 @@ public class Target {//目標状態のリストを生成する
     
     boolean containPoint2(ArrayList<Space> aUsedSpaceS,Space aNewSpace){
         for(Space tSpace:aUsedSpaceS){
-            if(!tSpace.compareTo(aNewSpace)){//ブロックの配置が全く同じものがあった場合
+            if(!tSpace.isSame(aNewSpace)){//ブロックの配置が全く同じものがあった場合
                 return(true);
             }
         }
