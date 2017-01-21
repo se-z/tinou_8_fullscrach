@@ -31,8 +31,9 @@ var mNameList = new Array();
 var mYState;
 var mXstate;
 var mAreaTop = -300;
-
-var mBoxAddCount = 0;
+var mAreaLong = 5; //使用できるx座標空間の定義
+//var mBoxAddCount = 0;
+var mPanelAddCount = 0;
 var mBoxCount = 0;
 var mXSpace = 0;
 
@@ -249,11 +250,11 @@ function onAddBoxButton(){
     SetData2(mId,[-1,-1]);
     add_box2();
 
-    // パネルの設置　x座標描画限界(10)まで
-    if(mBoxAddCount<10){
-      MakePanel();
-      mBoxAddCount++;
-    }
+    // // パネルの設置　x座標描画限界(10)まで
+    // if(mBoxAddCount<10){
+    //   MakePanel();
+    //   mBoxAddCount++;
+    // }
 
     mBoxCount++;
     PrepareMakeBox();
@@ -264,12 +265,12 @@ function onAddBoxButton(){
 function MakePanel(){
   var div_element = document.createElement("div");
   div_element.setAttribute('class','setpanel canset');//クラス（panel）を指定する
-  div_element.setAttribute('id','Panel'+mBoxAddCount.toString());
+  div_element.setAttribute('id','Panel'+mPanelAddCount.toString());
 
   var parent_object = document.getElementById("Ground");
 
   parent_object.appendChild(div_element);
-  $('#Panel'+mBoxAddCount.toString()).css({'position':'absolute','left':mBoxAddCount*100,'top':0});
+  $('#Panel'+mPanelAddCount.toString()).css({'position':'absolute','left':mPanelAddCount*100,'top':0});
 
   div_element.addEventListener('dragover',_dragover,false);
   div_element.addEventListener('drop',_drop,false);
@@ -383,6 +384,12 @@ function addEvents(){
   document.getElementById('ApplicateButton').disabled = true;//適用を不可能にする
   document.getElementById('ExecButton').disabled = true;//実行を不可能にする
   document.getElementById('TargetInput').disabled = false; // 目標状態の変更を可能にする
+
+  // パネルの設置　x座標描画限界(mAreaLong)まで
+  for(var i=0,len=mAreaLong;i<len;++i){
+    MakePanel();
+    mPanelAddCount++;
+  }
 }
 
 
@@ -401,7 +408,7 @@ function onApplicateButton(){
     tCheckState = true;
   } else{
     // パネルの無効化
-    for(var i=0,len = mBoxAddCount;i<len;++i){
+    for(var i=0,len = mAreaLong;i<len;++i){
       var tPanelId = 'Panel'+i;
       RemoveDropEvent(tPanelId);
       $('#'+tPanelId.toString()).removeClass("cannotset");
@@ -475,8 +482,8 @@ function transColorJ(colorJ){
 //GUI上の初期状態、目標状態からファイルを作る
 // $('#ExecButton').on('click', function () {
 function PrepareAjax(){
-  scale=[mBoxAddCount,4]; //  Y座標は常に4まで
-  var scaleX = [0,mBoxAddCount];
+  scale=[mAreaLong,4]; //  Y座標は常に4まで
+  var scaleX = [0,mAreaLong];
   var scaleY = [-2,4];
   var blocks = new Array();
   var shapeJ = "";
@@ -649,7 +656,7 @@ function init_Animation(){
 function end_Animation(){
 alert("アニメーションを終了します");
     // すべてのパネルの有効化
-    for(var i=0,len = mBoxAddCount;i<len;++i){
+    for(var i=0,len = mAreaLong;i<len;++i){
       var tPanelId = 'Panel'+i;
       SetDropEvent(tPanelId);
     }
