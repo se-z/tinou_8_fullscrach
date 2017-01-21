@@ -88,10 +88,15 @@ public abstract class Operator {
                 int tY = tPlaceable[1];
                 int[] tGoal = {tX, tY};
 
+                //目標空間よりも低い位置に、重たいブロックをおいたら、その時点で、解は達成されなくなる
+                if (tY < mTargetSpace.getPosition(tMovingBlockID)[1]) {
+                    continue;
+                }
 
                 if (aCurrentSpace.getPosition(tMovingBlockID)[0] < tY) {
                     continue;
                 }
+
                 if (!canSlideThrough(aCurrentSpace.getPosition(tMovingBlockID), tGoal, aCurrentSpace)) {
                     continue;
                 }
@@ -111,7 +116,7 @@ public abstract class Operator {
         }
 
         //評価関数の戻り値を返却
-        return evaluateSpace(tSpaceAfterMove, aSubTargetBlockID);
+        return evaluateSpace(tSpaceAfterMove, tMovingBlockID, aSubTargetBlockID);
     }
 
     /**
@@ -201,9 +206,10 @@ public abstract class Operator {
      * 評価関数
      *
      * @param tSpace       評価するSpaceのリスト
+     * @param aChosenBlockID 移動したブロックのID
      * @param aRootBlockID 副目標として設定されているブロック
      * @return
      */
-    abstract protected Space[] evaluateSpace(ArrayList<Space> tSpace, String aSubTargetBlockID);
+    abstract protected Space[] evaluateSpace(ArrayList<Space> aSpace, String aChosenBlockID, String aSubTargetBlockID);
 
 }

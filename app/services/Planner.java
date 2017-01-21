@@ -103,6 +103,7 @@ public class Planner {
         }
 
         //失敗したので、空の系列を返す
+        return  null;
     }
 
 
