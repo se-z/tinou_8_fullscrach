@@ -13,7 +13,11 @@ import views.html.*;
  */
 public class HomeController extends Controller {
 
+
     public Result index() {
+
+        // activator run -> http://localhost:9000 -> index()が実行される
+        // このクラスでテストする
 
 //		Target tgt = new Target();
 //        ArrayList<Space> answer = tgt.getTargetList2();
