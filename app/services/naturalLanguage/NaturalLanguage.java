@@ -1,4 +1,4 @@
-package services;
+package services.naturalLanguage;
 
 import java.util.*;
 import java.util.regex.Matcher;

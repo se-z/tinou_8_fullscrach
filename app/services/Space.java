@@ -13,7 +13,7 @@ public class Space {
     private HashMap<String, Boolean> mUpwardFlag; //上にブロックが乗っているかのフラグ
 
 
-    Space(int aMinX, int aMaxX, int aMinY, int aMaxY) {
+    public Space(int aMinX, int aMaxX, int aMinY, int aMaxY) {
         mSpaceSize = new HashMap<String, int[]>();
         int tXRange[] = {aMinX, aMaxX};
         int tYRange[] = {aMinY, aMaxY};
@@ -322,7 +322,7 @@ public class Space {
      * <p>
      * 前にyoshinoが実装した部分。一応残しておく
      **/
-    void show() {
+    public void show() {
         System.out.print("Blocks=");
         for (HashMap.Entry<String, Position> e : mBlocks.entrySet()) {
             System.out.print(e.getKey() + " :[ " + e.getValue().mX + "," + e.getValue().mY + "] ");

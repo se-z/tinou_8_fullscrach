@@ -1,8 +1,7 @@
 /**
  * @author YOSHINO KAI
  */
-package services;
-
+package services.naturalLanguage;
 import java.util.*;
 
 /**
