@@ -2,7 +2,6 @@ package services;
 
 /**
  * Created by seijihagawa on 2017/01/12.
- * package services;
  */
 
 import java.util.ArrayList;
@@ -41,8 +40,6 @@ public class Goals {
         mSeriesNumber = 0;
         mNumberInLine = 0;
         mFalseSeries = new ArrayList<>();
-
-
     }
 
 
@@ -83,6 +80,14 @@ public class Goals {
         return mCurrentID;
     }
 
+    public boolean isLast() {
+        if (mNumberInLine == mSeriesListInteger.get(0).size()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void setNextTarget() {
         mNumberInLine++;
         int tListSize = mSeriesListInteger.get(0).size();
@@ -93,6 +98,22 @@ public class Goals {
 
         int tNumber = mSeriesListInteger.get(mSeriesNumber).get(mNumberInLine);
         mCurrentID = mIDMap.get(tNumber);
+    }
+
+
+    /**
+     * 現在着目してるGoalsのリストを返す
+     *
+     * @return これを返してしまうと結構Goalsの存在意義が怪しくなる
+     */
+    public String[] getCurrentList() {
+        ArrayList<Integer> tSeries = mSeriesListInteger.get(mSeriesNumber);
+        String[] tString = new String[tSeries.size()];
+
+        for (int i = 0; i < tSeries.size(); i++) {
+            tString[i] = mIDMap.get(tSeries.get(i));
+        }
+        return tString;
     }
 
     /**

@@ -8,6 +8,10 @@ import java.util.Objects;
 /**
  * Created by seijihagawa on 2017/01/12.
  */
+
+/**
+ * fix関数使った記憶がない
+ */
 public class Space {
     private HashMap<String, Position> mBlocks;//ブロックの座標
     private HashMap<String, int[]> mSpaceSize;//座標空間の広さ
@@ -15,6 +19,7 @@ public class Space {
     private ArrayList<String> mFixedBlocks;
     private HashMap<String, Boolean> mUpwardFlag; //上にブロックが乗っているかのフラグ
 
+    private String mTargetID;
 
     public Space(int aMinX, int aMaxX, int aMinY, int aMaxY) {
         mSpaceSize = new HashMap<String, int[]>();
@@ -64,7 +69,6 @@ public class Space {
      */
     //前のインターフェースは addblock(String aID, int aX, int aY)
     // 例外処理の書き方を見直す
-    // 挙動確認済み
     public void addBlock(String aID, int aX, int aY) throws IllegalArgumentException {
 
         if (aX < mSpaceSize.get("x")[0] || aX > mSpaceSize.get("x")[1]
@@ -85,6 +89,19 @@ public class Space {
         if (aY - 1 < 0 && !beHole(aX, aY)) {
             dig(aX, aY);
         }
+    }
+
+    /**
+     * 系列を取得するためにIDを登録する
+     * <p>
+     * 新たに、TargetIDをもたせたのでバグってないかcheck出来てない
+     */
+    public void setTargetID(String aID) {
+        mTargetID = aID;
+    }
+
+    public String getTargetID() {
+        return mTargetID;
     }
 
     /**
@@ -158,14 +175,14 @@ public class Space {
         mFixedBlocks.add(aID);
     }
 
-    /**
-     * ブロックの固定を解放する
-     *
-     * @param aID
-     */
-    public void unfix(String aID) {
-        mFixedBlocks.remove(aID);
-    }
+//    /**
+//     * ブロックの固定を解放する
+//     *
+//     * @param aID
+//     */
+//    public void unfix(String aID) {
+//        mFixedBlocks.remove(aID);
+//    }
 
     /**
      * 指定した座標とそれよりも上の空間が穴であることを保証する

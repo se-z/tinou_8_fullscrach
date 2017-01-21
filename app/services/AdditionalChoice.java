@@ -37,8 +37,11 @@ public class AdditionalChoice {
      * @param aSubTargetBlock
      * @param aXMin           x座標の最小値
      * @param aXMax           x座標の最大値
+     *
+     * それまでの系列が0だとしてもおそらくバグなく動く
      */
-    public static String choiceBlock(Space aCurrentSpace, Space aTargetSpace, HashMap<String, Block> aBlocks, ArrayList<String> aSeries, String aSubTargetBlock, int aXMin, int aXMax) {
+    public static String choiceBlock(Space aCurrentSpace, Space aTargetSpace, HashMap<String, Block> aBlocks,
+                                     ArrayList<String> aSeries, String aSubTargetBlock, int aXMin, int aXMax) {
         HashMap<String, Integer> tEvaluate = new HashMap<>();
 
         //評価を行い結果をHashMapに記録

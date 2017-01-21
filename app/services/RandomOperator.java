@@ -10,13 +10,13 @@ public class RandomOperator extends Operator {
         super(aMinX, aMaxX, aMinY, aMaxY, aBlocks);
     }
 
-	@Override
-	public String choiceBlock(Space aCurrentSpace, ArrayList<String> aSeries, String aSubTargetBlock) {
-		return AdditionalChoice.choiceBlock(aCurrentSpace,mTargetSpace,mBlocks,aSeries,aSubTargetBlock,mSpaceSize.get("x")[0],mSpaceSize.get("x")[1]);
-	}
+    @Override
+    public String choiceBlock(Space aCurrentSpace, ArrayList<String> aSeries, String aSubTargetBlock) {
+        return AdditionalChoice.choiceBlock(aCurrentSpace, mTargetSpace, mBlocks, aSeries, aSubTargetBlock, mSpaceSize.get("x")[0], mSpaceSize.get("x")[1]);
+    }
 
-	@Override
-	protected Space[] evaluateSpace(ArrayList<Space> aSpace, String aChosenBlockID, String aSubTargetBlockID) {
-		return RandomEvaluation.evaluateSpace(aSpace, aSubTargetBlockID);
-	}
+    @Override
+    protected Space[] evaluateSpace(ArrayList<Space> aSpace, String aChosenBlockID, String aSubTargetBlockID) {
+        return RandomEvaluation.evaluateSpace(aSpace, aSubTargetBlockID);
+    }
 }

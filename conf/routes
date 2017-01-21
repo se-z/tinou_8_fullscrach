@@ -2,7 +2,6 @@
 GET     /                           controllers.HomeController.index
 #GET    /                           services.Tester.index2
 
-# 推論の実行ルーティング
 POST    /run/                         controllers.HomeController.run
 #POST    /run/                         controllers.CountController.run()
 

@@ -4,7 +4,6 @@ package services;
  * Created by seijihagawa on 2017/01/12.
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -36,85 +35,92 @@ public class Planner {
         mGoals = new Goals(mIDs);
         mSubGoalsList = new HashMap<>();
         mInitialSpace = aInitialSpace;
-        mOperator = new RandomOperator(aX[0], aX[1], aY[0], aY[1], aBlocks);
+        mOperator = new EvaluationOperator(aX[0], aX[1], aY[0], aY[1], aBlocks);
     }
 
-//    /**
-//     * Goalsの系列に対して、その系列をOperationに投げる
-//     * <p>
-//     * ここの実装がきたなすぎるので、書き直したい....
-//     */
-//    public OperationSeries[] STRIPS() {
-//
-//        for (Space tTargetSpace : mTargetOptions) {
-//
-//            //初期化処理 Goalsの初期化
-//            mGoals.randomSetSeries();
-//
-//            //subGoalsは都度初期化しなければいけない
-//
-//            //subGoalsの初期化
-//            for (String tID : mIDs) {
-//                SubGoals tSubGoals = new SubGoals();
-//                mSubGoalsList.remove(tID);
-//                mSubGoalsList.put(tID, tSubGoals);
-//            }
-//
-//
-//            //推論開始
-//            //大域的な木構造のバックトラックに関する関数
-//            for (int i_goals = 0; i_goals < k_GOALS_TRACK_TIME; i_goals++) {
-//
-//
-//                ArrayList<Space> tSpace = new ArrayList<>();
-//                tSpace.add(mInitialSpace);
-//                SubGoals tSub = mSubGoalsList.get(mGoals.getCurrentTarget());
-//                tSub.putSpaces(tSpace);
-//                String tTargetBlockID = mGoals.getCurrentTarget();
-//
-//                for (int k_subGoals = 0; k_subGoals < k_SUB_TRACK_TIME; k_subGoals++) {
-//
-//                    Space tCurrentSpace = tSub.getCurrentSpace();
-//                    //subGoalが達成されているならば、-> break このタイミング
-//                    ArrayList<String> tSeries = tSub.getBlockSeries();
-//
-//                    try {
-//                        // ここの例外処理は正しく書く
-//                        Space[] tNewSpaces = mOperator.findPositions(tCurrentSpace, tSeries, tTargetBlockID);
-//
-//                        //backtrack
-//                        if (tNewSpaces.length == 0) {
-//                            if (!tSub.backTrack()) {
-//                                continue;
-//                            }
-//                            break; // 内側のsubGoalsのfor文を抜けてるつもり
-//                        }
-//
-//                        //track
-//                        ArrayList<Space> tSpaceList = convertFrom(tNewSpaces);
-//                        tSub.putSpaces(tSpaceList);
-//
-//                    } catch (CloneNotSupportedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//
-//                //もし、すべての副目標が達成されているならば、
-//                //系列をすべて取り出して、返却をする
-//            }
-//        }
-//
-//        //失敗したので、空の系列を返す
-//        return null;
-//    }
+    /**
+     * Goalsの系列に対して、その系列をOperationに投げる
+     * <p>
+     * <p>
+     * Goalsの系列でバックトラックをしない実装にしてみた
+     */
+    public OperationSeries[] STRIPS() {
+
+        outside:
+        for (Space tTargetSpace : mTargetOptions) {
+
+            mGoals.randomSetSeries();
+            mOperator.setTargetSpace(tTargetSpace);
+            Space tInitial = mInitialSpace;
+            for (int i_goals = 0; i_goals < k_GOALS_TRACK_TIME; i_goals++) {
+
+                SubGoals tSubGoals = new SubGoals(tInitial);
+                mSubGoalsList.put(mGoals.getCurrentTarget(), tSubGoals);
+                String tSubTargetID = mGoals.getCurrentTarget();
+
+                for (int k_subs = 0; k_subs < k_SUB_TRACK_TIME; k_subs++) {
+
+                    //副目標が達成されてた場合
+                    if (isSubGoal(tSubGoals, tTargetSpace)) {
+                        if (mGoals.isLast()) {
+                            break outside;
+                        }
+
+                        tSubGoals.fixSubTarget(); //副目標を固定する
+                        tInitial = tSubGoals.getCurrentSpace().cloneSpace();
+                        mGoals.setNextTarget();
+                        break;
+                    }
+
+                    Space[] tTrack = mOperator.findPositions(tSubGoals.getCurrentSpace(),
+                            tSubGoals.getSeriesIDs(), tSubTargetID);
+
+                    //backTrack
+                    if (tTrack.length == 0) {
+                        if (tSubGoals.backTrack()) {
+                            continue;
+                        }
+
+                        //副目標の達成順序を初期化
+                        mGoals.randomSetSeries();
+                        mSubGoalsList.clear();
+                        mSubGoalsList.put(mGoals.getCurrentTarget(), new SubGoals(mInitialSpace));
+                        tInitial = mInitialSpace;
+                        break;
+                    }
+
+                    //Track
+                    tSubGoals.track(tTrack);
+                }
 
 
-    private ArrayList<Space> convertFrom(Space[] aSpace) {
-        ArrayList<Space> tSpaceList = new ArrayList<>();
-        for (int l = 0; l < aSpace.length; l++) {
-            tSpaceList.add(aSpace[l]);
+            }
         }
-        return tSpaceList;
+
+        String[] tList = mGoals.getCurrentList();
+        for (int i = 0; i < mSubGoalsList.size(); i++) {
+            SubGoals tSub = mSubGoalsList.get(tList[i]);
+            //OperationSeriesを生成
+        }
+
+        //return OperationSeries
+        return null; //ここだけ未完成
+    }
+
+    /**
+     * @param aSub
+     * @param aTarget
+     * @return 全体を通して、フィールドmGoalsのスコープが広すぎる。
+     * 内部を何度も更新されるのに、スコープが広すぎる
+     */
+    private boolean isSubGoal(SubGoals aSub, Space aTarget) {
+        if (aSub.getCurrentSpace().getPosition(mGoals.getCurrentTarget())[0]
+                == aTarget.getPosition(mGoals.getCurrentTarget())[0]
+                && aSub.getCurrentSpace().getPosition(mGoals.getCurrentTarget())[1]
+                == aTarget.getPosition(mGoals.getCurrentTarget())[1]) {
+            return true;
+        }
+        return false;
     }
 
 

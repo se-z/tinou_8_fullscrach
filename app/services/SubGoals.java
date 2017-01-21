@@ -43,12 +43,12 @@ public class SubGoals {
      * 双方向の木構造なので、子ノードから親ノードの登録
      * 親ノードから、子ノードの登録の両方を行う
      */
-    public void track(ArrayList<Space> aSpaces) {
+    public void track(Space[] aSpaces) {
 
         ArrayList<Node> tChildren = new ArrayList<>();
 
-        for (int i = 0; i < aSpaces.size(); i++) {
-            Space tSpace = aSpaces.get(i);
+        for (int i = 0; i < aSpaces.length; i++) {
+            Space tSpace = aSpaces[i];
             Node tChild = new Node(mCurrentNode, tSpace, i);
             tChildren.add(tChild);
         }
@@ -112,13 +112,34 @@ public class SubGoals {
 
 
     /**
-     * 要実装 sub木構造で今まで連続して動かしてきたBlockの名前の系列が渡される
-     *
-     * @return
+     * @return Spaceに新たにTargetIDをもたせたので、バグがないか不安
      */
-    public ArrayList<String> getBlockSeries() {
-        //未実装
-        return null;
+    public ArrayList<String> getSeriesIDs() {
+        ArrayList<String> tIDs = new ArrayList<>();
+        Node tMoveNode = mCurrentNode;
+
+        //現在, root ノードにいる場合
+        if (Objects.equals(mCurrentNode.getParentNode(), null)) {
+            //空のlistを返す
+            return tIDs;
+        }
+
+        tIDs.add(tMoveNode.getSpace().getTargetID());
+        while (true) {
+
+            if (Objects.equals(tMoveNode.getParentNode(), null)) {
+                break;
+            }
+            tMoveNode = tMoveNode.getParentNode();
+            tIDs.add(0, tMoveNode.getSpace().getTargetID()); //先頭に要素を追加
+        }
+        return tIDs;
+    }
+
+    public void fixSubTarget() {
+        Space tSpace = mCurrentNode.getSpace();
+        String tID = tSpace.getTargetID();
+        mCurrentNode.getSpace().fix(tID);
     }
 
 }

@@ -10,7 +10,9 @@ import java.util.Objects;
 public abstract class Operator {
     protected HashMap<String, int[]> mSpaceSize;
     protected HashMap<String, Block> mBlocks;
-    protected Space mTargetSpace; // 目標空間の状態
+    protected Space mTargetSpace;
+    // 目標空間の状態 これって最終の目標空間でいいんだよね？
+    //何通りかの目標空間があるので、更新可能でなければいけない
 
     /**
      * 座標空間の初期化
@@ -30,7 +32,7 @@ public abstract class Operator {
     }
 
     /**
-     * 目標空間をセット
+     * 最終の目標空間をセット
      *
      * @param aSpace
      */
@@ -114,8 +116,10 @@ public abstract class Operator {
 
         ArrayList<Space> tSpaceAfterMove = new ArrayList<>();
         //移動可能な座標リストから、移動後のSpaceのリストを生成
+        //生成されたSpaceにその時移動
         for (int[] tNewPosition : tMoveable) {
             Space tNewSpace = aCurrentSpace.cloneSpace();
+            tNewSpace.setTargetID(tMovingBlockID);
             tNewSpace.setBlockCloneSpace(tMovingBlockID, tNewPosition[0], tNewPosition[1]);
             tSpaceAfterMove.add(tNewSpace);
         }
@@ -181,6 +185,7 @@ public abstract class Operator {
      *
      * @return 移動できるBlockがない場合はnullを返す
      * 返却値はObjects.equals(o1, o2):booleanでcheckする
+     * これって公開にする理由ないよね
      */
     abstract public String choiceBlock(Space aCurrentSpace, ArrayList<String> aSeries, String aSubTargetBlock);
 
