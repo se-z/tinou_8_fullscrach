@@ -39,17 +39,19 @@ public class Planner {
         mOperator = new RandomOperator(aX[0], aX[1], aY[0], aY[1], aBlocks);
     }
 
-    /**
-     * Goalsの系列に対して、その系列をOperationに投げる
-     * <p>
-     * ここの実装がきたなすぎるので、書き直したい....
-     */
+//    /**
+//     * Goalsの系列に対して、その系列をOperationに投げる
+//     * <p>
+//     * ここの実装がきたなすぎるので、書き直したい....
+//     */
 //    public OperationSeries[] STRIPS() {
 //
 //        for (Space tTargetSpace : mTargetOptions) {
 //
 //            //初期化処理 Goalsの初期化
-//            mGoals.randomSet();
+//            mGoals.randomSetSeries();
+//
+//            //subGoalsは都度初期化しなければいけない
 //
 //            //subGoalsの初期化
 //            for (String tID : mIDs) {
@@ -103,7 +105,7 @@ public class Planner {
 //        }
 //
 //        //失敗したので、空の系列を返す
-//        return  null;
+//        return null;
 //    }
 
 
