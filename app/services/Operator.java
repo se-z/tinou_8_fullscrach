@@ -114,15 +114,17 @@ public abstract class Operator {
         //軽いBlockの場合
         else tMoveable = tPlaceableSpace;
 
-        ArrayList<Space> tSpaceAfterMove = new ArrayList<>();
+        ArrayList<Space> tSpaceAfterMove = new ArrayList<Space>();
         //移動可能な座標リストから、移動後のSpaceのリストを生成
         //生成されたSpaceにその時移動
         for (int[] tNewPosition : tMoveable) {
             //Space tNewSpace = aCurrentSpace.cloneSpace();
             Space tNewSpace = new Space(aCurrentSpace);
+			//System.out.println("CopyID="+tMovingBlockID);
             tNewSpace.setMovingID(tMovingBlockID);
             tNewSpace.setBlockCloneSpace(tMovingBlockID, tNewPosition[0], tNewPosition[1]);
             tSpaceAfterMove.add(tNewSpace);
+			//System.out.println("CopiedID="+tNewSpace.getMovingID());
         }
 
         //評価関数の戻り値を返却

@@ -76,7 +76,7 @@ public class Planner {
                 SubGoals tSubGoals = new SubGoals(tInitial);
                 String tSubTargetID = mGoals.getCurrentTarget();
                 mSubGoalsList.put(tSubTargetID, tSubGoals);
-                System.out.println("服目標を展開するListのサイズ");
+                System.out.println("副目標を展開するListのサイズ");
                 System.out.println(mSubGoalsList.size());
 
 
@@ -86,10 +86,17 @@ public class Planner {
                     if (isSubGoal(tSubGoals, tTargetSpace)) {
                         //ここでbreakするならば、副目標とのズレがあってはいけない
                         if (mGoals.isLast()) {
-                            System.out.println("最後の副目標が終了する場合は、服目標とGoalsのIDは一致していないといけない");
-                            System.out.println(mGoals.getCurrentTarget());
-                            System.out.println(mSubGoalsList.get(mGoals.getCurrentTarget()).getSeriesIDs());
-                            break outside;
+                            System.out.println("最後の副目標が終了する場合は、副目標とGoalsのIDは一致していないといけない");
+                            System.out.println("CurrentTarget="+mGoals.getCurrentTarget());
+                            System.out.println("sIDs="+mSubGoalsList.get(mGoals.getCurrentTarget()).getSeriesIDs());
+							String cID = mSubGoalsList.get(mGoals.getCurrentTarget()).getCurrentSpace().getMovingID();
+							System.out.println("cID="+cID);
+                            SubGoals tSub = mSubGoalsList.get(mGoals.getCurrentTarget());
+							ArrayList<Space> tSubSpaces = tSub.getSubSeries();
+							for (Space tSpace : tSubSpaces){
+								tSpace.setMovingID(cID);
+							}
+							break outside;
                         }
 
                         System.out.println("すべての副目標は達成されていないが、副目標が達成されたので、Goalsを更新する");
@@ -118,6 +125,7 @@ public class Planner {
                         mGoals.randomSetSeries();
                         mSubGoalsList.clear();
                         mSubGoalsList.put(mGoals.getCurrentTarget(), new SubGoals(mInitialSpace));
+						//System.out.println("Renewed!");
                         tInitial = mInitialSpace;
                         break;
                     }

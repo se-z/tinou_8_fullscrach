@@ -158,8 +158,7 @@ public class Space implements Cloneable {
      * @return
      */
     public int[] getPosition(String aID) {
-        System.out.println("aID="+aID);
-        System.out.println();
+        //System.out.println("aID="+aID);
         Position tPosition = mBlocks.get(aID);
         int[] tXY = {tPosition.getX(), tPosition.getY()};
         return tXY;

@@ -97,15 +97,21 @@ public class SubGoals {
     public ArrayList<Space> getSubSeries() {
         ArrayList<Space> tSeries = new ArrayList<Space>();
         Node tMoveNode = mCurrentNode;
-
+		if(tMoveNode.getSpace().getMovingID() != null){
         tSeries.add(tMoveNode.getSpace());
+		}
+		//System.out.println("movingSpace="+tMoveNode.getSpace());
+		System.out.println("MovingID in SubGoals ="+tMoveNode.getSpace().getMovingID());
         while (true) {
 
             if (Objects.equals(tMoveNode.getParentNode(), null)) {
                 break;
             }
             tMoveNode = tMoveNode.getParentNode();
+			if(tMoveNode.getSpace().getMovingID() != null){
             tSeries.add(0, tMoveNode.getSpace()); //先頭に要素を追加
+			}
+			System.out.println("MovingID in SubGoals="+tMoveNode.getSpace().getMovingID());
         }
         return tSeries;
     }
