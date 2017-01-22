@@ -25,6 +25,8 @@ public class Application {
 
     public Application(Request aRequest) {
         mRequest = aRequest;
+        mBlocks = new HashMap<>();
+
         mX[0] = mRequest.getX().get(0);
         mX[1] = mRequest.getX().get(1);
         mY[0] = mRequest.getY().get(0);
@@ -40,8 +42,10 @@ public class Application {
             block_req tb = tBlocks.get(i);
             Block tB = new Block(tb.getId(), tb.getShape(), tb.getHeavy());
             String tID = tb.getId();
-			mBlocks.put(tID,tB);
-			System.out.println("tID="+tID+" Shape="+tb.getShape()+" heavy="+tb.getHeavy());
+            System.out.println(tID);
+            System.out.println(tB);
+
+            mBlocks.put(tID, tB);
             mIDs[i] = tID;
             int tX = tb.getCoordinate().get(0);
             int tY = tb.getCoordinate().get(1);
@@ -52,8 +56,18 @@ public class Application {
     public ArrayList<OperationSeries> run() {
         FieldData tFiled = new FieldData(mRequest);
         Target tTarget = new Target();
-        Space[] tTargets = tTarget.getTargetList2(tFiled);
-        Planner tPlanner = new Planner(tTargets, mBlocks, mIDs, mInitialSpace, mX, mY);
+        Space[] tTargetList = tTarget.getTargetList2(tFiled);
+
+        System.out.println("目標状態の座標一覧 blockの名前はAとBにしてね");
+        for (Space tS : tTargetList) {
+            System.out.print(tS.getPosition("A")[0]);
+            System.out.print(" ");
+            System.out.println(tS.getPosition("A")[1]);
+            System.out.print(tS.getPosition("B")[0]);
+            System.out.print(" ");
+            System.out.println(tS.getPosition("B")[1]);
+        }
+        Planner tPlanner = new Planner(tTargetList, mBlocks, mIDs, mInitialSpace, mX, mY);
         ArrayList<OperationSeries> tOperationSeries = tPlanner.STRIPS();
         return tOperationSeries;
     }

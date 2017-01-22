@@ -118,7 +118,8 @@ public abstract class Operator {
         //移動可能な座標リストから、移動後のSpaceのリストを生成
         //生成されたSpaceにその時移動
         for (int[] tNewPosition : tMoveable) {
-            Space tNewSpace = aCurrentSpace.cloneSpace();
+            //Space tNewSpace = aCurrentSpace.cloneSpace();
+            Space tNewSpace = aCurrentSpace.clone();
             tNewSpace.setMovingID(tMovingBlockID);
             tNewSpace.setBlockCloneSpace(tMovingBlockID, tNewPosition[0], tNewPosition[1]);
             tSpaceAfterMove.add(tNewSpace);

@@ -92,7 +92,7 @@ public class SubGoals {
      * 現在のノードから、backTrackで通過した系列をListとして返却
      *
      * @return 関数の終了後も、木構造におけるmCurrentNodeの位置に変化はない
-     * 未テスト
+     * ここでは、自分のspaceを含むべき
      */
     public ArrayList<Space> getSubSeries() {
         ArrayList<Space> tSeries = new ArrayList<>();
@@ -113,14 +113,14 @@ public class SubGoals {
 
     /**
      * @return Spaceに新たにTargetIDをもたせたので、バグがないか不安
+     * ここでは、現在着目してるIDは含まないべき
      */
     public ArrayList<String> getSeriesIDs() {
         ArrayList<String> tIDs = new ArrayList<>();
-        Node tMoveNode = mCurrentNode;
+        Node tMoveNode = mCurrentNode.getParentNode();
 
         //現在, root ノードにいる場合
-        if (Objects.equals(mCurrentNode.getParentNode(), null)) {
-            //空のlistを返す
+        if (Objects.equals(tMoveNode, null)) {
             return tIDs;
         }
 

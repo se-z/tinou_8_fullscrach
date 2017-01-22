@@ -11,7 +11,7 @@
     {
       "id": "String",
       "shape": "String",
-      "coodinate": [
+      "coordinate": [
         "int",
         "int"
       ],

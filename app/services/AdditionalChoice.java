@@ -37,8 +37,8 @@ public class AdditionalChoice {
      * @param aSubTargetBlock
      * @param aXMin           x座標の最小値
      * @param aXMax           x座標の最大値
-     *
-     * それまでの系列が0だとしてもおそらくバグなく動く
+     *                        <p>
+     *                        それまでの系列が0だとしてもおそらくバグなく動く
      */
     public static String choiceBlock(Space aCurrentSpace, Space aTargetSpace, HashMap<String, Block> aBlocks,
                                      ArrayList<String> aSeries, String aSubTargetBlock, int aXMin, int aXMax) {
@@ -50,7 +50,10 @@ public class AdditionalChoice {
             if (Objects.equals(tBlockID, null)) {
                 continue;
             }
-            if (aSeries.size() > 0 && tBlockID.equals(aSeries.get(aSeries.size() - 1))) {//最後に移動させたブロックは選択しない
+
+
+            if (!aSeries.isEmpty() && tBlockID.equals(aSeries.get(aSeries.size() - 1))) {
+                //最後に移動させたブロックは選択しない
                 continue;
             }
 
