@@ -37,6 +37,7 @@ public class Application {
 
         mInitialSpace = new Space(mRequest.getX().get(0), mRequest.getX().get(1),
                 mRequest.getY().get(0), mRequest.getY().get(1));
+		System.out.println("Constructor mIS="+mInitialSpace);
 		mBlocks = new HashMap<String, Block>();
         for (int i = 0; i < tBlocks.size(); i++) {
             block_req tb = tBlocks.get(i);
@@ -67,6 +68,7 @@ public class Application {
             System.out.print(" ");
             System.out.println(tS.getPosition("B")[1]);
         }
+		System.out.println("App MIS="+mInitialSpace);
         Planner tPlanner = new Planner(tTargetList, mBlocks, mIDs, mInitialSpace, mX, mY);
         ArrayList<OperationSeries> tOperationSeries = tPlanner.STRIPS();
         return tOperationSeries;

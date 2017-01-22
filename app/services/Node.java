@@ -21,7 +21,7 @@ public class Node {
     //rootNodeの実装用
     //初期状態はrootに持たせる
     public Node(Space aSpace) {
-        mFalseChildren = new ArrayList<>();
+        mFalseChildren = new ArrayList<Integer>();
         mParentNode = null;
         mSpace = aSpace;
     }

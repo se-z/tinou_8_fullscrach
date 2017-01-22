@@ -39,6 +39,7 @@ public class Planner {
         mGoals = new Goals(mIDs);
         mSubGoalsList = new HashMap<>();
         mInitialSpace = aInitialSpace;
+		//System.out.println("InitmIS="+mInitialSpace);
 		//System.out.println("aBlock Size="+aBlocks.size());
         mOperator = new EvaluationOperator(aX[0], aX[1], aY[0], aY[1], aBlocks);
     }
@@ -71,6 +72,7 @@ public class Planner {
             for (int i_goals = 0; i_goals < k_GOALS_TRACK_TIME; i_goals++) {
 
                 System.out.println("副目標の初期化");
+				//System.out.println("tInitial="+tInitial);
                 SubGoals tSubGoals = new SubGoals(tInitial);
                 String tSubTargetID = mGoals.getCurrentTarget();
                 mSubGoalsList.put(tSubTargetID, tSubGoals);
@@ -93,12 +95,15 @@ public class Planner {
                         System.out.println("すべての副目標は達成されていないが、副目標が達成されたので、Goalsを更新する");
                         tSubGoals.fixSubTarget(); //副目標を固定する
                         //tInitial = tSubGoals.getCurrentSpace().cloneSpace();
-                        tInitial = tSubGoals.getCurrentSpace().clone();
+                        //System.out.println("before="+tInitial);
+						//tInitial = tSubGoals.getCurrentSpace().clone();
+						tInitial =  new Space(tSubGoals.getCurrentSpace());
+						//System.out.println("after="+tInitial);
                         mGoals.setNextTarget();
                         break;
 
                     }
-
+					//tSubGoals.getCurrentSpace().show();
                     //この関数はまだ確認しきれていない
                     Space[] tTrack = mOperator.findPositions(tSubGoals.getCurrentSpace(),
                             tSubGoals.getSeriesIDs(), tSubTargetID);

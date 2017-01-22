@@ -95,7 +95,7 @@ public class SubGoals {
      * ここでは、自分のspaceを含むべき
      */
     public ArrayList<Space> getSubSeries() {
-        ArrayList<Space> tSeries = new ArrayList<>();
+        ArrayList<Space> tSeries = new ArrayList<Space>();
         Node tMoveNode = mCurrentNode;
 
         tSeries.add(tMoveNode.getSpace());

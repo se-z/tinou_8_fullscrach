@@ -42,8 +42,8 @@ public class Space implements Cloneable {
 		mBlocks = new HashMap<String, Position>(origin.mBlocks);
 		mSpaceSize = new HashMap<String, int[]>(origin.mSpaceSize);
 		mXDepth = new HashMap<Integer, Integer>(origin.mXDepth);
-		mFixedBlocks = new ArrayList<String>();
-        mUpwardFlag = new HashMap<String, Boolean>();
+		mFixedBlocks = new ArrayList<String>(origin.mFixedBlocks);
+        mUpwardFlag = new HashMap<String, Boolean>(origin.mUpwardFlag);
 	}
 	
     private class Position {//座標の情報を持つクラス
@@ -158,7 +158,7 @@ public class Space implements Cloneable {
      * @return
      */
     public int[] getPosition(String aID) {
-        System.out.println(aID);
+        System.out.println("aID="+aID);
         System.out.println();
         Position tPosition = mBlocks.get(aID);
         int[] tXY = {tPosition.getX(), tPosition.getY()};
@@ -392,6 +392,7 @@ public class Space implements Cloneable {
         }
         System.out.println("");
         System.out.println("Depth=" + mXDepth);
+		System.out.println("mUp="+mUpwardFlag.size());
     }
 
 

@@ -119,7 +119,7 @@ public abstract class Operator {
         //生成されたSpaceにその時移動
         for (int[] tNewPosition : tMoveable) {
             //Space tNewSpace = aCurrentSpace.cloneSpace();
-            Space tNewSpace = aCurrentSpace.clone();
+            Space tNewSpace = new Space(aCurrentSpace);
             tNewSpace.setMovingID(tMovingBlockID);
             tNewSpace.setBlockCloneSpace(tMovingBlockID, tNewPosition[0], tNewPosition[1]);
             tSpaceAfterMove.add(tNewSpace);
