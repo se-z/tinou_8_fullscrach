@@ -104,7 +104,7 @@ public class Request {
         blocks = aBlock;
     }
 
-    @JsonSetter("color")
+    @JsonSetter("order")
     public void setOrder(ArrayList<String> aOrder) {
         order = aOrder;
     }
