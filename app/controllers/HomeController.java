@@ -1,9 +1,19 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
+import services.JSON.*;
 import play.mvc.*;
 import views.html.*;
+
+import java.io.IOException;
+
+import play.libs.Json;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -13,33 +23,25 @@ public class HomeController extends Controller {
 
 
     public Result index() {
-
-        // activator run -> http://localhost:9000 -> index()が実行される
-        // このクラスでテストする
-
-//		Target tgt = new Target();
-//        ArrayList<Space> answer = tgt.getTargetList2();
-//		String dir = System.getProperty("user.dir");
-//		System.out.println("CyrrentDirectry=： " + dir);
-//		return ok(index.render(answer.toString()));
-
-//        String[] str = {"A", "B", "c"};
-//        System.out.println("Goals初期化");
-//        Goals tG = new Goals(str);
-//        System.out.println("初期化完了");
-
         return ok(index.render("Your new application is ready."));
     }
 
 
-    public Result run() {
+    public Result run() throws IOException {
         System.out.println("############  run!!  ############");
 
         JsonNode json = request().body().asJson();
+        //String jsonString = json.toString();
         System.out.println(json);
+        //ObjectMapper mapper = new ObjectMapper();
+
+        Request tRequest = Json.fromJson(json, Request.class);
+        System.out.println(tRequest);
 
         return ok();
     }
 
 
 }
+
+
