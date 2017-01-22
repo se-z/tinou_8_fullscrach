@@ -1,0 +1,35 @@
+{
+  "X": [
+    0,
+    5
+  ],
+  "Y": [
+    -2,
+    4
+  ],
+  "blocks": [
+    {
+      "id": "A",
+      "shape": "四角",
+      "coodinate": [
+        1,
+        0
+      ],
+      "heavy": false,
+      "color": "赤"
+    },
+    {
+      "id": "B",
+      "shape": "四角",
+      "coodinate": [
+        4,
+        0
+      ],
+      "heavy": false,
+      "color": "赤"
+    }
+  ],
+  "order": [
+    "A"
+  ]
+}

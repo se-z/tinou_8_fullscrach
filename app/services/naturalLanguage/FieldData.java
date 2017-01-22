@@ -1,5 +1,7 @@
 package services.naturalLanguage;
 
+import services.JSON.Request;
+
 import java.util.ArrayList;
 
 /**
@@ -11,7 +13,7 @@ import java.util.ArrayList;
  * "X": ["int min", "int max"],
  * "Y": ["int min", "int max"],
  * "blocks": [
- * {"id": "String", "shape": "String", "coodinate": [ "int", "int" ]},
+ * {"id": "String", "shape": "String", "color":"String"},
  * {},
  * {}
  * ],
@@ -32,6 +34,9 @@ public class FieldData {
         mBlocks = aBlocks;
     }
 
+    public FieldData(Request aRequest){
+
+    }
 
     public void setX(int[] aX) {
         mX = aX;
@@ -66,5 +71,7 @@ public class FieldData {
         }
         return (objList);
     }
+
+
 	
 }
