@@ -3,6 +3,9 @@ package services.naturalLanguage;
 /**
  * Created by seijihagawa on 2017/01/22.
  */
+
+import services.JSON.block_req;
+
 public class block_nl {
 
     private String mID;
@@ -13,6 +16,12 @@ public class block_nl {
         mID = aID;
         mShape = aShape;
         mColor = aColor;
+    }
+
+    public block_nl(block_req aBlock) {
+        mID = aBlock.getId();
+        mShape = aBlock.getShape();
+        mColor = aBlock.getShape();
     }
 
     public void setId(String aID) {
@@ -27,15 +36,15 @@ public class block_nl {
         mColor = aColor;
     }
 
-	public String getId() {
-        return(mID);
+    public String getId() {
+        return (mID);
     }
 
     public String getShape() {
-        return(mShape);
+        return (mShape);
     }
 
     public String getColor() {
-        return(mColor);
+        return (mColor);
     }
 }

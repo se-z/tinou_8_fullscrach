@@ -8,7 +8,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.ArrayList;
 
-/**{
+/**
+ * {
  * "X": ["int min", "int max"],
  * "Y": ["int min", "int max"],
  * "blocks": [
@@ -18,77 +19,51 @@ import java.util.ArrayList;
  * ],
  * "order": [ "String", "String", "String", ...]
  * }
+ *
+ * block -> block_reqに変更
  */
 public class Request {
-    private int[] X = new int[2];
-    private int[] Y = new int[2];
-    private ArrayList<block> blocks;
+    private ArrayList<Integer> X = new ArrayList<>();
+    private ArrayList<Integer> Y = new ArrayList<>();
+    private ArrayList<block_req> blocks;
     private ArrayList<String> order;
 
     public Request() {
-        blocks = new ArrayList<block>();
-        order = new ArrayList<String>();
     }
-    //blocksっていう配列に、オブジェクトをもたせている
-
-    public class block {
-        private String id;
-        private String shape;
-        private int[] coordinate = new int[2];
-        private boolean heavy;
-        private String color;
-
-        public block() {
-
-        }
-
-        @JsonSetter("id")
-        public void setId(String aID) {
-            id = aID;
-        }
-
-        @JsonSetter("shape")
-        public void setShape(String aShape) {
-            shape = aShape;
-        }
-
-        @JsonSetter("coordinate")
-        public void setCoordinate(int[] aCoordinate) {
-            coordinate[0] = aCoordinate[0];
-            coordinate[1] = aCoordinate[1];
-        }
-
-        @JsonSetter("heavy")
-        public void setHeavy(boolean aHeavy) {
-            heavy = aHeavy;
-        }
-
-        @JsonSetter("color")
-        public void setColor(String aColor) {
-            color = aColor;
-        }
-
-    }
-
 
     @JsonSetter("X")
-    public void setX(int[] aX) {
+    public void setX(ArrayList<Integer> aX) {
         X = aX;
     }
 
     @JsonSetter("Y")
-    public void setY(int[] aY) {
+    public void setY(ArrayList<Integer> aY) {
         Y = aY;
     }
 
     @JsonSetter("blocks")
-    public void setBlocks(ArrayList<block> aBlock) {
+    public void setBlocks(ArrayList<block_req> aBlock) {
         blocks = aBlock;
-
     }
 
-    @JsonSetter("color")
+    @JsonSetter("order")
     public void setOrder(ArrayList<String> aOrder) {
         order = aOrder;
+    }
+
+    public ArrayList<Integer> getX() {
+        return X;
+    }
+
+    public ArrayList<Integer> getY() {
+        return Y;
+    }
+
+    public ArrayList<block_req> getBlocks() {
+        return blocks;
+    }
+
+    public ArrayList<String> getOrder() {
+        return order;
     }
 }

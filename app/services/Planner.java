@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import services.JSON.*;
+import services.JSON.OperationSeries;
 
 /**
  * 現在の状態が目標状態になっているかを確かめ、プランを適用する
@@ -111,8 +112,8 @@ public class Planner {
                 String tID = tSpace.getMovingID();
                 int[] tXY = tSpace.getPosition(tID);
                 OperationSeries tOpe = new OperationSeries();
-                tOpe.setID(tID);
-                tOpe.setNewPosition(tXY);
+                tOpe.setId(tID);
+                tOpe.setnewPosition(tXY[0], tXY[1]);
                 tOperation.add(tOpe);
             }
         }

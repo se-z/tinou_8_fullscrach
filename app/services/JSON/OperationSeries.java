@@ -5,6 +5,7 @@ package services.JSON;
  */
 
 import com.fasterxml.jackson.annotation.*;
+import java.util.ArrayList;
 
 /**
  * Json形式で、このクラスを表す
@@ -18,33 +19,60 @@ import com.fasterxml.jackson.annotation.*;
  */
 public class OperationSeries {
     private String id;
-    //ここってリストにしなくて大丈夫なんだろうか
-    private int[] newPosition = new int[2];
+    private ArrayList<Integer> newPosition;
 
     public OperationSeries() {
+
     }
 
     @JsonSetter("id")
-    public void setID(String aID) {
-        id = aID;
+    public void setId(String aId) {
+        id = aId;
     }
 
-    //これでいいのか？
     @JsonSetter("newPosition")
-    public void setNewPosition(int[] aNewPosition) {
-        newPosition[0] = aNewPosition[0];
-        newPosition[1] = aNewPosition[1];
+    public void setnewPosition(int aX, int aY) {
+        newPosition = new ArrayList<Integer>();
+        newPosition.add(aX);
+        newPosition.add(aY);
     }
 
-    @JsonGetter("id")
-    public String getID() {
-        return id;
+    public String getId() {
+        return (id);
     }
 
-    @JsonGetter("newPosition")
-    public int[] getNewPosition() {
-        return newPosition;
+    public ArrayList<Integer> getnewPosition() {
+        return (newPosition);
     }
-
 
 }
+
+
+//class Response {
+//    String id;
+//    ArrayList<Integer> newPosition;
+//
+//    public Response() {
+//
+//    }
+//
+//    @JsonSetter("id")
+//    public void setId(String aId) {
+//        id = aId;
+//    }
+//
+//    @JsonSetter("newPosition")
+//    public void setnewPosition(int aX, int aY) {
+//        newPosition = new ArrayList<Integer>();
+//        newPosition.add(aX);
+//        newPosition.add(aY);
+//    }
+//
+//    public String getId() {
+//        return (id);
+//    }
+//
+//    public ArrayList<Integer> getnewPosition() {
+//        return (newPosition);
+//    }
+//}

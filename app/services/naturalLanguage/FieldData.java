@@ -1,6 +1,10 @@
 package services.naturalLanguage;
 
+import services.JSON.Request;
+
 import java.util.ArrayList;
+
+import services.JSON.block_req;
 
 /**
  * Created by seijihagawa on 2017/01/22.
@@ -11,7 +15,7 @@ import java.util.ArrayList;
  * "X": ["int min", "int max"],
  * "Y": ["int min", "int max"],
  * "blocks": [
- * {"id": "String", "shape": "String", "coodinate": [ "int", "int" ]},
+ * {"id": "String", "shape": "String", "color":"String"},
  * {},
  * {}
  * ],
@@ -32,6 +36,19 @@ public class FieldData {
         mBlocks = aBlocks;
     }
 
+    public FieldData(Request aRequest) {
+        mX[0] = aRequest.getX().get(0);
+        mX[1] = aRequest.getX().get(1);
+        mY[0] = aRequest.getY().get(0);
+        mY[1] = aRequest.getY().get(1);
+
+        mOrder = aRequest.getOrder();
+        mBlocks = new ArrayList<>();
+        for (block_req tBlock : aRequest.getBlocks()) {
+            block_nl tB = new block_nl(tBlock);
+            mBlocks.add(tB);
+        }
+    }
 
     public void setX(int[] aX) {
         mX = aX;
@@ -49,22 +66,26 @@ public class FieldData {
         mBlocks = aBlock;
 
     }
-	
-	
-	public ArrayList<Integer> getSpace(){
-		ArrayList<Integer> space = new ArrayList<Integer>();
-		space.add(mX[0]);space.add(mX[1]);space.add(mY[0]);space.add(mY[1]);
-		return(space);
-	}
-	
-	public ArrayList<String> getExObjList() {
+
+
+    public ArrayList<Integer> getSpace() {
+        ArrayList<Integer> space = new ArrayList<Integer>();
+        space.add(mX[0]);
+        space.add(mX[1]);
+        space.add(mY[0]);
+        space.add(mY[1]);
+        return (space);
+    }
+
+    public ArrayList<String> getExObjList() {
         ArrayList<String> objList = new ArrayList<String>();
-		for (block_nl tBlock : mBlocks) {
+        for (block_nl tBlock : mBlocks) {
             if (!objList.contains(tBlock.getId())) {
                 objList.add(tBlock.getId());
             }
         }
         return (objList);
     }
-	
+
+
 }
