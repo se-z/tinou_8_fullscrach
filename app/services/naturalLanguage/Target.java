@@ -412,7 +412,7 @@ public class Target {//目標状態のリストを生成する
         return (end);
     }
 
-    public ArrayList<Space> getTargetList2(FieldData aFData) {
+    public Space[] getTargetList2(FieldData aFData) {
         ArrayList<Integer> space = new ArrayList<Integer>();
         Converter conv = new Converter();
         //space = conv.getSpace2();
@@ -556,7 +556,13 @@ public class Target {//目標状態のリストを生成する
 
         }//
         System.out.println("answer=" + answerList.size());
-        return (answerList);
+		
+		Space[] answerList2 = new Space[answerList.size()]; 
+		for(int i = 0; i < answerList.size(); ++i){
+			answerList2[i] = answerList.get(i);
+		}
+		
+        return (answerList2);
     }
 	/*
     ArrayList<Space> getTargetList() {
