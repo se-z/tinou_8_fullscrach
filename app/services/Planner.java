@@ -4,7 +4,10 @@ package services;
  * Created by seijihagawa on 2017/01/12.
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import services.JSON.*;
 
 /**
  * 現在の状態が目標状態になっているかを確かめ、プランを適用する
@@ -43,8 +46,9 @@ public class Planner {
      * <p>
      * <p>
      * Goalsの系列でバックトラックをしない実装にしてみた
+     * 未テスト
      */
-    public OperationSeries[] STRIPS() {
+    public ArrayList<OperationSeries> STRIPS() {
 
         outside:
         for (Space tTargetSpace : mTargetOptions) {
@@ -97,14 +101,23 @@ public class Planner {
             }
         }
 
+        //移動系列の取得 返却
+        ArrayList<OperationSeries> tOperation = new ArrayList<>();
         String[] tList = mGoals.getCurrentList();
         for (int i = 0; i < mSubGoalsList.size(); i++) {
             SubGoals tSub = mSubGoalsList.get(tList[i]);
-            //OperationSeriesを生成
+            ArrayList<Space> tSubSpaces = tSub.getSubSeries();
+            for (Space tSpace : tSubSpaces) {
+                String tID = tSpace.getMovingID();
+                int[] tXY = tSpace.getPosition(tID);
+                OperationSeries tOpe = new OperationSeries();
+                tOpe.setID(tID);
+                tOpe.setNewPosition(tXY);
+                tOperation.add(tOpe);
+            }
         }
 
-        //return OperationSeries
-        return null; //ここだけ未完成
+        return tOperation;
     }
 
     /**

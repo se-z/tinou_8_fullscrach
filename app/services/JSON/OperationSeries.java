@@ -1,4 +1,4 @@
-package services;
+package services.JSON;
 
 /**
  * Created by seijihagawa on 2017/01/14.
@@ -9,12 +9,16 @@ import com.fasterxml.jackson.annotation.*;
 /**
  * Json形式で、このクラスを表す
  * {"id":"String", "newPosition":["x int", "y int"]}
+ * このオブジェクトのArrayList、
+ * ObjectMapper mapper = new ObjectMapper();
+ * mapper.writeValue(System.out, このオブジェクトのArrayList);みたいな感じで、
+ * トップレベルが配列のjsonにできる
  */
 public class OperationSeries {
     private String mID;
     private int[] mNewPosition = new int[2];
 
-    OperationSeries(){}
+    public OperationSeries(){}
 
     @JsonSetter("id")
     public void setID(String aID){

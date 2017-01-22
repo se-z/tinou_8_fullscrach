@@ -124,21 +124,21 @@ public class SubGoals {
             return tIDs;
         }
 
-        tIDs.add(tMoveNode.getSpace().getTargetID());
+        tIDs.add(tMoveNode.getSpace().getMovingID());
         while (true) {
 
             if (Objects.equals(tMoveNode.getParentNode(), null)) {
                 break;
             }
             tMoveNode = tMoveNode.getParentNode();
-            tIDs.add(0, tMoveNode.getSpace().getTargetID()); //先頭に要素を追加
+            tIDs.add(0, tMoveNode.getSpace().getMovingID()); //先頭に要素を追加
         }
         return tIDs;
     }
 
     public void fixSubTarget() {
         Space tSpace = mCurrentNode.getSpace();
-        String tID = tSpace.getTargetID();
+        String tID = tSpace.getMovingID();
         mCurrentNode.getSpace().fix(tID);
     }
 

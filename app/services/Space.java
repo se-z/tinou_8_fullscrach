@@ -19,7 +19,7 @@ public class Space {
     private ArrayList<String> mFixedBlocks;
     private HashMap<String, Boolean> mUpwardFlag; //上にブロックが乗っているかのフラグ
 
-    private String mTargetID;
+    private String mMovingID;
 
     public Space(int aMinX, int aMaxX, int aMinY, int aMaxY) {
         mSpaceSize = new HashMap<String, int[]>();
@@ -96,12 +96,12 @@ public class Space {
      * <p>
      * 新たに、TargetIDをもたせたのでバグってないかcheck出来てない
      */
-    public void setTargetID(String aID) {
-        mTargetID = aID;
+    public void setMovingID(String aID) {
+        mMovingID = aID;
     }
 
-    public String getTargetID() {
-        return mTargetID;
+    public String getMovingID() {
+        return mMovingID;
     }
 
     /**
