@@ -96,7 +96,7 @@ public class Converter {//自然言語の入力に対して、順序構造を表
         ArrayList<Interm> list = new ArrayList<Interm>();
         for (String state : arg_tgtStateS) {
             //ArrayList<String> objS = new ArrayList<String>();//ブロックのリスト
-            String[] splited = state.split("は|が");//"は","が"で分ける 想定では２つに分かれる
+            String[] splited = state.split("は|が|を");//"は","が"で分ける 想定では２つに分かれる
             if (splited.length != 2) {//2つに分けられなかった場合
                 System.out.println("Unexpected splited!");
                 return (list);
@@ -441,8 +441,8 @@ public class Converter {//自然言語の入力に対して、順序構造を表
 
         return (orderList);
     }
-	
-	void setMatchList2(ArrayList<String> a_List, ArrayList<block_nl> aBlockList, String a_match) {
+
+    void setMatchList2(ArrayList<String> a_List, ArrayList<block_nl> aBlockList, String a_match) {
         for (block_nl tBlock : aBlockList) {
             if (tBlock.getColor().equals(a_match) || tBlock.getShape().equals(a_match)) {
                 a_List.add(tBlock.getId());
@@ -450,8 +450,8 @@ public class Converter {//自然言語の入力に対して、順序構造を表
         }
     }
 
-	
-	//既に作られたIntermリストをブロック情報を基に拡張する
+
+    //既に作られたIntermリストをブロック情報を基に拡張する
     ArrayList<Interm> getExIntermList2(ArrayList<Interm> a_originList, ArrayList<block_nl> a_blockList) {
         ArrayList<Interm> exList = new ArrayList<Interm>();
         for (Interm origin : a_originList) {
@@ -498,19 +498,19 @@ public class Converter {//自然言語の入力に対して、順序構造を表
         }
         return (exList);
     }
-	
-	ArrayList<Order> getExOrderList2(ArrayList<String> aObjList,FieldData aFData) {
+
+    ArrayList<Order> getExOrderList2(ArrayList<String> aObjList, FieldData aFData) {
         ArrayList<Order> orderList = new ArrayList<Order>();
-            //ArrayList<Block2> blockList = getBlockList(root);
-            //ArrayList<String> orderInputS = getOrderInput(root);
-            ArrayList<Interm> intermList = getIntermList(aFData.mOrder);
-            ArrayList<Interm> exList = getExIntermList2(intermList,aFData.mBlocks);
-            orderList = getOrderList(aObjList, exList);
+        //ArrayList<Block2> blockList = getBlockList(root);
+        //ArrayList<String> orderInputS = getOrderInput(root);
+        ArrayList<Interm> intermList = getIntermList(aFData.mOrder);
+        ArrayList<Interm> exList = getExIntermList2(intermList, aFData.mBlocks);
+        orderList = getOrderList(aObjList, exList);
 
         return (orderList);
     }
 
-	
+
     public static void main(String args[]) {
         ArrayList<Integer> space = new ArrayList<Integer>();
         ArrayList<Block2> blockList = new ArrayList<Block2>();

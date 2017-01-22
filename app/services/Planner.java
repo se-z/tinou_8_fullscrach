@@ -53,30 +53,51 @@ public class Planner {
 
         outside:
         for (Space tTargetSpace : mTargetOptions) {
+            System.out.println("#####################################################################");
+            System.out.println("全体での目標状態");
+            System.out.println(tTargetSpace);
+
 
             mGoals.randomSetSeries();
+            System.out.println("副目標の達成順序は");
+            System.out.println(mGoals.getCurrentList());
+
+
             mOperator.setTargetSpace(tTargetSpace);
             Space tInitial = mInitialSpace;
+
+
             for (int i_goals = 0; i_goals < k_GOALS_TRACK_TIME; i_goals++) {
 
+                System.out.println("副目標の初期化");
                 SubGoals tSubGoals = new SubGoals(tInitial);
-                mSubGoalsList.put(mGoals.getCurrentTarget(), tSubGoals);
                 String tSubTargetID = mGoals.getCurrentTarget();
+                mSubGoalsList.put(tSubTargetID, tSubGoals);
+                System.out.println("服目標を展開するListのサイズ");
+                System.out.println(mSubGoalsList.size());
+
 
                 for (int k_subs = 0; k_subs < k_SUB_TRACK_TIME; k_subs++) {
 
                     //副目標が達成されてた場合
                     if (isSubGoal(tSubGoals, tTargetSpace)) {
+                        //ここでbreakするならば、副目標とのズレがあってはいけない
                         if (mGoals.isLast()) {
+                            System.out.println("最後の副目標が終了する場合は、服目標とGoalsのIDは一致していないといけない");
+                            System.out.println(mGoals.getCurrentTarget());
+                            System.out.println(mSubGoalsList.get(mGoals.getCurrentTarget()).getSeriesIDs());
                             break outside;
                         }
 
+                        System.out.println("すべての副目標は達成されていないが、副目標が達成されたので、Goalsを更新する");
                         tSubGoals.fixSubTarget(); //副目標を固定する
                         tInitial = tSubGoals.getCurrentSpace().cloneSpace();
                         mGoals.setNextTarget();
                         break;
+
                     }
 
+                    //この関数はまだ確認しきれていない
                     Space[] tTrack = mOperator.findPositions(tSubGoals.getCurrentSpace(),
                             tSubGoals.getSeriesIDs(), tSubTargetID);
 
@@ -111,6 +132,8 @@ public class Planner {
             for (Space tSpace : tSubSpaces) {
                 String tID = tSpace.getMovingID();
                 int[] tXY = tSpace.getPosition(tID);
+                System.out.println(tID);
+                System.out.println(tXY);
                 OperationSeries tOpe = new OperationSeries();
                 tOpe.setId(tID);
                 tOpe.setnewPosition(tXY[0], tXY[1]);
@@ -128,10 +151,17 @@ public class Planner {
      * 内部を何度も更新されるのに、スコープが広すぎる
      */
     private boolean isSubGoal(SubGoals aSub, Space aTarget) {
-        if (aSub.getCurrentSpace().getPosition(mGoals.getCurrentTarget())[0]
-                == aTarget.getPosition(mGoals.getCurrentTarget())[0]
-                && aSub.getCurrentSpace().getPosition(mGoals.getCurrentTarget())[1]
-                == aTarget.getPosition(mGoals.getCurrentTarget())[1]) {
+        String tSubTarget = mGoals.getCurrentTarget();
+        //目標座標
+        int tSubX = aSub.getCurrentSpace().getPosition(tSubTarget)[0];
+        int tSubY = aSub.getCurrentSpace().getPosition(tSubTarget)[1];
+
+        //実際の座標
+        int tX = aTarget.getPosition(tSubTarget)[0];
+        int tY = aTarget.getPosition(tSubTarget)[1];
+
+
+        if (tSubX == tX && tSubY == tY) {
             return true;
         }
         return false;

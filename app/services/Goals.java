@@ -81,7 +81,7 @@ public class Goals {
     }
 
     public boolean isLast() {
-        if (mNumberInLine == mSeriesListInteger.get(0).size()) {
+        if (mNumberInLine == mSeriesListInteger.get(0).size() - 1) {
             return true;
         }
 
@@ -92,7 +92,7 @@ public class Goals {
         mNumberInLine++;
         int tListSize = mSeriesListInteger.get(0).size();
 
-        if (mNumberInLine > tListSize) {
+        if (mNumberInLine >= tListSize) {
             throw new IndexOutOfBoundsException();
         }
 
