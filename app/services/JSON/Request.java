@@ -19,75 +19,17 @@ import java.util.ArrayList;
  * ],
  * "order": [ "String", "String", "String", ...]
  * }
+ *
+ * block -> block_reqに変更
  */
 public class Request {
     private ArrayList<Integer> X = new ArrayList<>();
     private ArrayList<Integer> Y = new ArrayList<>();
-    private ArrayList<block> blocks;
+    private ArrayList<block_req> blocks;
     private ArrayList<String> order;
 
     public Request() {
     }
-    //blocksっていう配列に、オブジェクトをもたせている
-
-    public static class block {
-        private String id;
-        private String shape;
-        private ArrayList<Integer> coordinate = new ArrayList<>();
-        private boolean heavy;
-        private String color;
-
-        public block() {
-
-        }
-
-        @JsonSetter("id")
-        public void setId(String aID) {
-            id = aID;
-        }
-
-        @JsonSetter("shape")
-        public void setShape(String aShape) {
-            shape = aShape;
-        }
-
-        @JsonSetter("coordinate")
-        public void setCoordinate(ArrayList<Integer> aCoordinate) {
-            coordinate = aCoordinate;
-        }
-
-        @JsonSetter("heavy")
-        public void setHeavy(boolean aHeavy) {
-            heavy = aHeavy;
-        }
-
-        @JsonSetter("color")
-        public void setColor(String aColor) {
-            color = aColor;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getShape() {
-            return shape;
-        }
-
-        public ArrayList<Integer> getCoordinate() {
-            return coordinate;
-        }
-
-        public boolean getHeavy() {
-            return heavy;
-        }
-
-        public String getColor() {
-            return color;
-        }
-
-    }
-
 
     @JsonSetter("X")
     public void setX(ArrayList<Integer> aX) {
@@ -100,7 +42,7 @@ public class Request {
     }
 
     @JsonSetter("blocks")
-    public void setBlocks(ArrayList<block> aBlock) {
+    public void setBlocks(ArrayList<block_req> aBlock) {
         blocks = aBlock;
     }
 
@@ -117,7 +59,7 @@ public class Request {
         return Y;
     }
 
-    public ArrayList<block> getBlocks() {
+    public ArrayList<block_req> getBlocks() {
         return blocks;
     }
 

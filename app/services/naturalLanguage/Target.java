@@ -259,8 +259,8 @@ public class Target {//目標状態のリストを生成する
             }//for(HeatMap map:a_hMapS)
 
             HashMap<String, Integer[]> sortedS = sortBlockS(mBlockS);
-            for (HashMap.Entry<String, Integer[]> block : sortedS.entrySet()) {
-                ans.addBlock(block.getKey(), block.getValue()[0], block.getValue()[1]);
+            for (HashMap.Entry<String, Integer[]> block_req : sortedS.entrySet()) {
+                ans.addBlock(block_req.getKey(), block_req.getValue()[0], block_req.getValue()[1]);
             }
 
             if (end) {
