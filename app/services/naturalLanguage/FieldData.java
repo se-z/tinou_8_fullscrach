@@ -19,10 +19,10 @@ import java.util.ArrayList;
  * }
  */
 public class FieldData {
-    private int[] mX = new int[2];
-    private int[] mY = new int[2];
-    private ArrayList<String> mOrder;
-    private ArrayList<block_nl> mBlocks;
+    public int[] mX = new int[2];
+    public int[] mY = new int[2];
+    public ArrayList<String> mOrder;
+    public ArrayList<block_nl> mBlocks;
 
 
     public FieldData(int[] aX, int[] aY, ArrayList<String> aOrder, ArrayList<block_nl> aBlocks) {
@@ -49,4 +49,22 @@ public class FieldData {
         mBlocks = aBlock;
 
     }
+	
+	
+	public ArrayList<Integer> getSpace(){
+		ArrayList<Integer> space = new ArrayList<Integer>();
+		space.add(mX[0]);space.add(mX[1]);space.add(mY[0]);space.add(mY[1]);
+		return(space);
+	}
+	
+	public ArrayList<String> getExObjList() {
+        ArrayList<String> objList = new ArrayList<String>();
+		for (block_nl tBlock : mBlocks) {
+            if (!objList.contains(tBlock.getId())) {
+                objList.add(tBlock.getId());
+            }
+        }
+        return (objList);
+    }
+	
 }

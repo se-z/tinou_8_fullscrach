@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import services.JSON.*;
+import services.naturalLanguage.*;
 import play.mvc.*;
 import views.html.*;
 
@@ -34,8 +35,10 @@ public class HomeController extends Controller {
         //String jsonString = json.toString();
         System.out.println(json);
         //ObjectMapper mapper = new ObjectMapper();
-
+		FieldData fd = Json.fromJson(json,FieldData.class);
+		System.out.println("fd="+fd);
         Request tRequest = Json.fromJson(json, Request.class);
+		System.out.println("tRequest="+tRequest);
         System.out.println(tRequest);
 
         return ok();

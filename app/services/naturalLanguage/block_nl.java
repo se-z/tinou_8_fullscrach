@@ -7,12 +7,12 @@ public class block_nl {
 
     private String mID;
     private String mShape;
-    private int[] mCoordinate = new int[2];
+    private String mColor;
 
-    public block_nl(String aID, String aShape, int[] aCoordinate) {
+    public block_nl(String aID, String aShape, String aColor) {
         mID = aID;
         mShape = aShape;
-        mCoordinate = aCoordinate;
+        mColor = aColor;
     }
 
     public void setId(String aID) {
@@ -23,10 +23,19 @@ public class block_nl {
         mShape = aShape;
     }
 
-    public void setCoordinate(int[] aCoordinate) {
-        mCoordinate[0] = aCoordinate[0];
-        mCoordinate[1] = aCoordinate[1];
+    public void setCoordinate(String aColor) {
+        mColor = aColor;
     }
 
+	public String getId() {
+        return(mID);
+    }
 
+    public String getShape() {
+        return(mShape);
+    }
+
+    public String getColor() {
+        return(mColor);
+    }
 }

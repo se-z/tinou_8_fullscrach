@@ -49,8 +49,8 @@ public class Converter {//自然言語の入力に対して、順序構造を表
         put("左", "右");
     }};
     static String justRegex = "ちょうど|真";
-    //static String path = "app\\services\\Block2.json";
-    static String path = "app/services/Block2.json";
+    static String path = "app\\services\\Block2.json";//Windows
+    //static String path = "app/services/Block2.json";//Mac
 
 
     ArrayList<String> getObjList(ArrayList<String> arg_tgtStateS) {
@@ -441,7 +441,76 @@ public class Converter {//自然言語の入力に対して、順序構造を表
 
         return (orderList);
     }
+	
+	void setMatchList2(ArrayList<String> a_List, ArrayList<block_nl> aBlockList, String a_match) {
+        for (block_nl tBlock : aBlockList) {
+            if (tBlock.getColor().equals(a_match) || tBlock.getShape().equals(a_match)) {
+                a_List.add(tBlock.getId());
+            }
+        }
+    }
 
+	
+	//既に作られたIntermリストをブロック情報を基に拡張する
+    ArrayList<Interm> getExIntermList2(ArrayList<Interm> a_originList, ArrayList<block_nl> a_blockList) {
+        ArrayList<Interm> exList = new ArrayList<Interm>();
+        for (Interm origin : a_originList) {
+            ArrayList<String> alphaS = new ArrayList<String>();
+            ArrayList<String> betaS = new ArrayList<String>();
+            boolean concrete = true;//具体的でない色や形ではないか
+            for (String color : colorS) {
+                if (origin.alpha.contains(color)) {//左が色であった場合
+                    setMatchList2(alphaS, a_blockList, color);//同じ色を持つものを全て取り出す
+                    concrete = false;
+                } else if (origin.beta.contains(color)) {//右が色であった場合 左右が同じ色であることはないと想定する
+                    setMatchList2(betaS, a_blockList, color);
+                    concrete = false;
+                }
+            }
+
+            for (String shape : shapeS) {
+                if (origin.alpha.contains(shape)) {//左が形であった場合
+                    setMatchList2(alphaS, a_blockList, shape);//形が一致するものを全て取り出す
+                    concrete = false;
+                } else if (origin.beta.contains(shape)) {//右が形であった場合
+                    setMatchList2(betaS, a_blockList, shape);
+                    concrete = false;
+                }
+            }
+
+            if (concrete) {
+                alphaS.add(origin.alpha);
+                betaS.add(origin.beta);
+            }
+            //System.out.println("alpha="+alphaS);
+            //System.out.println("beta="+betaS);
+            for (String alpha : alphaS) {
+                for (String beta : betaS) {
+                    Interm new_interm = new Interm();
+                    new_interm.alpha = alpha;
+                    new_interm.beta = beta;
+                    new_interm.relation = origin.relation;
+                    if (!containIntermList(exList, new_interm)) {
+                        exList.add(new_interm);
+                    }
+                }
+            }
+        }
+        return (exList);
+    }
+	
+	ArrayList<Order> getExOrderList2(ArrayList<String> aObjList,FieldData aFData) {
+        ArrayList<Order> orderList = new ArrayList<Order>();
+            //ArrayList<Block2> blockList = getBlockList(root);
+            //ArrayList<String> orderInputS = getOrderInput(root);
+            ArrayList<Interm> intermList = getIntermList(aFData.mOrder);
+            ArrayList<Interm> exList = getExIntermList2(intermList,aFData.mBlocks);
+            orderList = getOrderList(aObjList, exList);
+
+        return (orderList);
+    }
+
+	
     public static void main(String args[]) {
         ArrayList<Integer> space = new ArrayList<Integer>();
         ArrayList<Block2> blockList = new ArrayList<Block2>();

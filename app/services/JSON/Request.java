@@ -26,8 +26,8 @@ public class Request {
     private ArrayList<String> order;
 
     public Request() {
-        blocks = new ArrayList<>();
-        order = new ArrayList<>();
+        blocks = new ArrayList<block>();
+        order = new ArrayList<String>();
     }
     //blocksっていう配列に、オブジェクトをもたせている
 
