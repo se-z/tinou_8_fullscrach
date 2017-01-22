@@ -96,7 +96,7 @@ public class Converter {//自然言語の入力に対して、順序構造を表
         ArrayList<Interm> list = new ArrayList<Interm>();
         for (String state : arg_tgtStateS) {
             //ArrayList<String> objS = new ArrayList<String>();//ブロックのリスト
-            String[] splited = state.split("は|が");//"は","が"で分ける 想定では２つに分かれる
+            String[] splited = state.split("は|が|を");//"は","が"で分ける 想定では２つに分かれる
             if (splited.length != 2) {//2つに分けられなかった場合
                 System.out.println("Unexpected splited!");
                 return (list);

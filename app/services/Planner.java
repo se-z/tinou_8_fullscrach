@@ -39,6 +39,7 @@ public class Planner {
         mGoals = new Goals(mIDs);
         mSubGoalsList = new HashMap<>();
         mInitialSpace = aInitialSpace;
+		//System.out.println("aBlock Size="+aBlocks.size());
         mOperator = new EvaluationOperator(aX[0], aX[1], aY[0], aY[1], aBlocks);
     }
 

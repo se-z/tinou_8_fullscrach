@@ -90,12 +90,13 @@ public class Goals {
 
     public void setNextTarget() {
         mNumberInLine++;
-        int tListSize = mSeriesListInteger.get(0).size();
+        int tListSize = mSeriesListInteger.get(mSeriesNumber).size();
 
         if (mNumberInLine > tListSize) {
             throw new IndexOutOfBoundsException();
         }
-
+		System.out.println("mSn="+mSeriesNumber+" mNil="+mNumberInLine+
+		" mg1="+mSeriesListInteger.size()+" mg2="+mSeriesListInteger.get(mSeriesNumber).size());
         int tNumber = mSeriesListInteger.get(mSeriesNumber).get(mNumberInLine);
         mCurrentID = mIDMap.get(tNumber);
     }

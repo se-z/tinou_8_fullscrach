@@ -35,12 +35,13 @@ public class Application {
 
         mInitialSpace = new Space(mRequest.getX().get(0), mRequest.getX().get(1),
                 mRequest.getY().get(0), mRequest.getY().get(1));
-
+		mBlocks = new HashMap<String, Block>();
         for (int i = 0; i < tBlocks.size(); i++) {
             block_req tb = tBlocks.get(i);
             Block tB = new Block(tb.getId(), tb.getShape(), tb.getHeavy());
             String tID = tb.getId();
-			System.out.println("tID="+tID+" blocks="+tBlocks.size()+" coSize="+tb.getCoordinate().size());
+			mBlocks.put(tID,tB);
+			System.out.println("tID="+tID+" Shape="+tb.getShape()+" heavy="+tb.getHeavy());
             mIDs[i] = tID;
             int tX = tb.getCoordinate().get(0);
             int tY = tb.getCoordinate().get(1);
