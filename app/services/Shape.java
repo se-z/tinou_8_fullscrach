@@ -1,16 +1,16 @@
 package services;
 
 public enum Shape {
-	Box(true),
-	Triangle(false),
-	Trapezoid(true);
-	
+	四角(true),
+	三角(false),
+	台形(true);
+
 	private final boolean CanBeOn;
-	
+
 	private Shape(boolean aCanBeOn){
 		CanBeOn=aCanBeOn;
 	}
-	
+
 	/**
 	 * 形の名前を返す
 	 * @return

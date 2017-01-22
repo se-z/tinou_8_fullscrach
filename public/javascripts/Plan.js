@@ -202,14 +202,14 @@ function SetCurrentBoxState(){
 // ボックスが同X座標で頂点にあるかの判定
 function ApaxCheck(aNum){
   var tNum=aNum;
-  var tNumY = init_anim_data[tNum].coodinate[0];
-  var tNumX = init_anim_data[tNum].coodinate[1];
+  var tNumY = init_anim_data[tNum].coordinate[0];
+  var tNumX = init_anim_data[tNum].coordinate[1];
   ///var tSameXCount = 0;
 
   for(var i = 0, len = init_anim_data.length; i < len; ++i){
-    if(init_anim_data[i].coodinate[1] == tNumX){
+    if(init_anim_data[i].coordinate[1] == tNumX){
       ///tSameXCount++;
-      if(/*i != tNum && */init_anim_data[i].coodinate[0] > tNumY){
+      if(/*i != tNum && */init_anim_data[i].coordinate[0] > tNumY){
         return false;///
       }
     }
@@ -243,7 +243,7 @@ function onAddBoxButton(){
     mNameList.push(mId);
 
     // 初期状態リストに状態を保存
-    var new_init_data = {id:mId,shape:mShape,coodinate:[-1, -1],heavy:mWeight,color:mColor};
+    var new_init_data = {id:mId,shape:mShape,coordinate:[-1, -1],heavy:mWeight,color:mColor};
     init_anim_data.push(new_init_data);
 
     // ボックスの作成
@@ -309,7 +309,7 @@ function onChangeBoxButton(){
     tTargetBox.addClass("heavy");
   }
 
-  var tPanelId = 'Panel'+init_anim_data[tNum].coodinate[1];
+  var tPanelId = 'Panel'+init_anim_data[tNum].coordinate[1];
 
   if(ApaxCheck(tNum)){// 頂点のボックスなら直上のパネルが使えるか判定
     UsePanelCheck(tPanelId,tNum);
@@ -491,10 +491,10 @@ function PrepareAjax(){
   for(var i=0; i<init_anim_data.length; i++){
     shapeJ = transShapeJ(init_anim_data[i].shape);
     colorJ = transColorJ(init_anim_data[i].color);
-    var new_coodinate = new Array();
-    new_coodinate[0] = init_anim_data[i].coodinate[1];
-    new_coodinate[1] = init_anim_data[i].coodinate[0];
-    var block = {"id":init_anim_data[i].id, "shape":shapeJ, "coodinate":new_coodinate,"heavy":init_anim_data[i].heavy,"color":colorJ};
+    var new_coordinate = new Array();
+    new_coordinate[0] = init_anim_data[i].coordinate[1];
+    new_coordinate[1] = init_anim_data[i].coordinate[0];
+    var block = {"id":init_anim_data[i].id, "shape":shapeJ, "coordinate":new_coordinate,"heavy":init_anim_data[i].heavy,"color":colorJ};
     blocks[i] = block;
   }
   var str = targetstate.TextArea.value;
@@ -667,7 +667,7 @@ alert("アニメーションを終了します");
       tBoxId.draggable = true;
       tBoxId.addEventListener('dragstart',_dragstart,false);
 
-      var tBoxState = init_anim_data[j].coodinate;//[1];
+      var tBoxState = init_anim_data[j].coordinate;//[1];
       var tBoxXState = tBoxState[1];
       var tPanelId = 'Panel'+tBoxXState.toString();
       if(ApaxCheck(j)){ // 頂点のボックスの場合は
@@ -736,7 +736,7 @@ function set_arm(){
 function ResetState() {
   // ブロックを初期状態に移動させる
   for (var i = 0; i < init_anim_data.length; ++i) {
-    SetData2(init_anim_data[i].id,init_anim_data[i].coodinate);
+    SetData2(init_anim_data[i].id,init_anim_data[i].coordinate);
     ///mYState = mYState*(-1);
     move_box2();
   }
@@ -923,8 +923,8 @@ function SetBox(event){
     // 移動したオブジェクトの座標情報を変更
     mXState = Math.ceil(tPanelPosition.left);
     mYState = Math.ceil(tPanelPosition.top);
-    init_anim_data[tNum].coodinate[0] = -mYState/100;////
-    init_anim_data[tNum].coodinate[1] = mXState/100;
+    init_anim_data[tNum].coordinate[0] = -mYState/100;////
+    init_anim_data[tNum].coordinate[1] = mXState/100;
     $('#'+id_name).css({'left':mXState,'top':mYState});
 
     // 移動後のX座標のパネルが使用できるか判定
@@ -942,8 +942,8 @@ function SideCheck(aPanelId,aNum) {
   var tNum = aNum; // ブロック
   var tPanelIdScript = tPanelId.replace( /Panel/g , "" ) ;
 
-  if(tPanelIdScript != init_anim_data[tNum].coodinate[1]){
-    if(-1 != init_anim_data[tNum].coodinate[1]){
+  if(tPanelIdScript != init_anim_data[tNum].coordinate[1]){
+    if(-1 != init_anim_data[tNum].coordinate[1]){
       DownBoxs(aNum); // 初期移動じゃないなら元いたx成分要素の位置を修正
     }
     return true; // 横移動なら
@@ -955,17 +955,17 @@ function SideCheck(aPanelId,aNum) {
 // 移動したボックスのx成分要素の位置修正
 function DownBoxs(aNum){
   var tNum=aNum;
-  var tNumY = init_anim_data[tNum].coodinate[0];
-  var tNumX = init_anim_data[tNum].coodinate[1];
+  var tNumY = init_anim_data[tNum].coordinate[0];
+  var tNumX = init_anim_data[tNum].coordinate[1];
   var j = new Array();
 
   // 同X座標のボックスの位置修正
   for(var i = 0, len = init_anim_data.length; i < len; ++i){
-    if(init_anim_data[i].coodinate[1] == tNumX){
-      if(/*i != tNum &&*/ init_anim_data[i].coodinate[0] > tNumY){///
+    if(init_anim_data[i].coordinate[1] == tNumX){
+      if(/*i != tNum &&*/ init_anim_data[i].coordinate[0] > tNumY){///
         j.push(i);
-        init_anim_data[i].coodinate[0] -= 1;///
-        var NewY = init_anim_data[i].coodinate[0]*(-100);/////
+        init_anim_data[i].coordinate[0] -= 1;///
+        var NewY = init_anim_data[i].coordinate[0]*(-100);/////
         $('#box'+init_anim_data[i].id.toString()).css({'top':NewY});
       }
     }
@@ -1000,7 +1000,7 @@ function UsePanelCheck(aPanelId,aNum){
   var tNum = aNum;
 
   // ボックスが三角形か、Y座標上限でないかを元に判定
-  if(init_anim_data[tNum].shape == "triangle" || init_anim_data[tNum].coodinate[0]*(-100) == mAreaTop){///
+  if(init_anim_data[tNum].shape == "triangle" || init_anim_data[tNum].coordinate[0]*(-100) == mAreaTop){///
     RemoveDropEvent(tPanelId); // パネルへのドロップを禁止
   } else {
     SetDropEvent(tPanelId);// パネルへのドロップを可能にする
