@@ -11,7 +11,7 @@ public class block_req {
 
     private String id;
     private String shape;
-    private ArrayList<Integer> coordinate = new ArrayList<>();
+    private ArrayList<Integer> coordinate = new ArrayList<Integer>();
     private boolean heavy;
     private String color;
 
@@ -31,6 +31,7 @@ public class block_req {
 
     @JsonSetter("coordinate")
     public void setCoordinate(ArrayList<Integer> aCoordinate) {
+		System.out.println("aco="+aCoordinate);
         coordinate = aCoordinate;
     }
 

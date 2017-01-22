@@ -40,6 +40,7 @@ public class Application {
             block_req tb = tBlocks.get(i);
             Block tB = new Block(tb.getId(), tb.getShape(), tb.getHeavy());
             String tID = tb.getId();
+			System.out.println("tID="+tID+" blocks="+tBlocks.size()+" coSize="+tb.getCoordinate().size());
             mIDs[i] = tID;
             int tX = tb.getCoordinate().get(0);
             int tY = tb.getCoordinate().get(1);

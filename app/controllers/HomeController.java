@@ -34,6 +34,7 @@ public class HomeController extends Controller {
         ArrayList<OperationSeries> tResult = tApp.run();
         JsonNode tResultJson = Json.toJson(tResult);
         String tResultString = Json.stringify(tResultJson);
+		System.out.println("tResult="+tResultString);
         return ok(tResultString);
 
 //        System.out.println(tRequest.getX());
