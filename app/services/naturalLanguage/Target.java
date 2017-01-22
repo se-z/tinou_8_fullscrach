@@ -559,7 +559,7 @@ public class Target {//目標状態のリストを生成する
 		
 		Space[] answerList2 = new Space[answerList.size()]; 
 		for(int i = 0; i < answerList.size(); ++i){
-			answerList2[i] = answerList.get(i);
+			answerList2[i] = new Space(answerList.get(i));
 		}
 		
         return (answerList2);

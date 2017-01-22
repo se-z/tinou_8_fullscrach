@@ -156,6 +156,7 @@ public class Planner {
      */
     private boolean isSubGoal(SubGoals aSub, Space aTarget) {
         String tSubTarget = mGoals.getCurrentTarget();
+		System.out.println("test="+aSub.getCurrentSpace());
         //目標座標
         int tSubX = aSub.getCurrentSpace().getPosition(tSubTarget)[0];
         int tSubY = aSub.getCurrentSpace().getPosition(tSubTarget)[1];
