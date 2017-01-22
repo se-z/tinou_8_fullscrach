@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * fix関数使った記憶がない
  */
-public class Space {
+public class Space implements Cloneable {
     private HashMap<String, Position> mBlocks;//ブロックの座標
     private HashMap<String, int[]> mSpaceSize;//座標空間の広さ
     private HashMap<Integer, Integer> mXDepth;//穴の位置と深さ
@@ -67,8 +67,7 @@ public class Space {
      * @param aY  blockをaddできることを前提としているので、ありえない配置でもaddできるという問題点はある
      *            kaiくんのコードとすり合わせができているか確認する
      */
-    //前のインターフェースは addblock(String aID, int aX, int aY)
-    // 例外処理の書き方を見直す
+
     public void addBlock(String aID, int aX, int aY) throws IllegalArgumentException {
 
         if (aX < mSpaceSize.get("x")[0] || aX > mSpaceSize.get("x")[1]
@@ -151,6 +150,8 @@ public class Space {
      * @return
      */
     public int[] getPosition(String aID) {
+        System.out.println(aID);
+        System.out.println();
         Position tPosition = mBlocks.get(aID);
         int[] tXY = {tPosition.getX(), tPosition.getY()};
         return tXY;
@@ -308,34 +309,58 @@ public class Space {
     }
 
 
-    /**
-     * 現在の状態を複製して返す.
-     *
-     * @return 別のオブジェクトが生成されていることは確認済み
-     * 未テスト
-     */
-    public Space cloneSpace() {
-        int[] tXRange = mSpaceSize.get("x");
-        int[] tYRange = mSpaceSize.get("y");
-        Space tReturned = new Space(tXRange[0], tXRange[1], tYRange[0], tYRange[1]);
-        for (String tID : mBlocks.keySet()) {
-            Position tPosition = mBlocks.get(tID);
-            Position tCPPosition = new Position(tPosition.getX(), tPosition.getY());
-            tReturned.mBlocks.put(tID, tCPPosition);
+//    /**
+//     * 現在の状態を複製して返す.
+//     *
+//     * @return 別のオブジェクトが生成されていることは確認済み
+//     * 未テスト
+//     */
+//    public Space cloneSpace() {
+//
+//        int[] tXRange = mSpaceSize.get("x");
+//        int[] tYRange = mSpaceSize.get("y");
+//        Space tClone = new Space(tXRange[0], tXRange[1], tYRange[0], tYRange[1]);
+//        for (String tID : mBlocks.keySet()) {
+//            Position tPosition = mBlocks.get(tID);
+//            int tX = tPosition.getX();
+//            int tY = tPosition.getY();
+//            tClone.addBlock(tID, tPosition.getX(), tPosition.getY());
+//            //Position tNew = new Position(tPosition.getX(), tPosition.getY());
+//            //tClone.mBlocks.put(tID, tNew);
+//        }
+//        try {
+//            for (Integer tX : mXDepth.keySet()) {
+//                Integer tY = mXDepth.get(tX);
+//                tClone.mXDepth.put(tX.clone(), tY.clone());
+//            }
+//            for (String tID : mFixedBlocks) {
+//                String tBlock = tID;
+//                tClone.mFixedBlocks.add(tBlock);
+//            }
+//            for (String tID : mUpwardFlag.keySet()) {
+//                tClone.mUpwardFlag.put(tID, mUpwardFlag.get(tID));
+//            }
+//        } catch (CloneNotSupportedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return tClone;
+//    }
+//
+
+    @Override
+    public Space clone() {
+        try {
+            Space tClone = (Space) super.clone();
+            return tClone;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return null;
         }
-        for (Integer tX : mXDepth.keySet()) {
-            Integer tY = mXDepth.get(tX);
-            tReturned.mXDepth.put(tX, tY);
-        }
-        for (String tID : mFixedBlocks) {
-            String tBlock = tID;
-            tReturned.mFixedBlocks.add(tBlock);
-        }
-        for (String tID : mUpwardFlag.keySet()) {
-            tReturned.mUpwardFlag.put(tID, mUpwardFlag.get(tID));
-        }
-        return tReturned;
     }
+
 
     /**
      * 表示を行う

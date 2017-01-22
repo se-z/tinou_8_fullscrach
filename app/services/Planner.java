@@ -91,7 +91,8 @@ public class Planner {
 
                         System.out.println("すべての副目標は達成されていないが、副目標が達成されたので、Goalsを更新する");
                         tSubGoals.fixSubTarget(); //副目標を固定する
-                        tInitial = tSubGoals.getCurrentSpace().cloneSpace();
+                        //tInitial = tSubGoals.getCurrentSpace().cloneSpace();
+                        tInitial = tSubGoals.getCurrentSpace().clone();
                         mGoals.setNextTarget();
                         break;
 
@@ -130,6 +131,8 @@ public class Planner {
             SubGoals tSub = mSubGoalsList.get(tList[i]);
             ArrayList<Space> tSubSpaces = tSub.getSubSeries();
             for (Space tSpace : tSubSpaces) {
+                System.out.println("何番目のSpaceにIDが登録されていないのか");
+                System.out.println(tSpace);
                 String tID = tSpace.getMovingID();
                 int[] tXY = tSpace.getPosition(tID);
                 System.out.println(tID);
