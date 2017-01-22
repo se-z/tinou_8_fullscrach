@@ -31,7 +31,6 @@ public class block_req {
 
     @JsonSetter("coordinate")
     public void setCoordinate(ArrayList<Integer> aCoordinate) {
-		System.out.println("aco="+aCoordinate);
         coordinate = aCoordinate;
     }
 
