@@ -38,14 +38,15 @@ public class Space implements Cloneable {
         }
     }
 
-	public Space(Space origin){
-		mBlocks = new HashMap<String, Position>(origin.mBlocks);
-		mSpaceSize = new HashMap<String, int[]>(origin.mSpaceSize);
-		mXDepth = new HashMap<Integer, Integer>(origin.mXDepth);
-		mFixedBlocks = new ArrayList<String>(origin.mFixedBlocks);
-        mUpwardFlag = new HashMap<String, Boolean>(origin.mUpwardFlag);
-	}
-	
+    public Space(Space origin) {
+        mBlocks = new HashMap<>(origin.mBlocks);
+        mSpaceSize = new HashMap<>(origin.mSpaceSize);
+        mXDepth = new HashMap<>(origin.mXDepth);
+        mFixedBlocks = new ArrayList<>(origin.mFixedBlocks);
+        mUpwardFlag = new HashMap<>(origin.mUpwardFlag);
+        mMovingID = origin.mMovingID;
+    }
+
     private class Position {//座標の情報を持つクラス
         private final int mX;
         private final int mY;
@@ -360,11 +361,11 @@ public class Space implements Cloneable {
         System.out.println("clone");
         try {
             Space tClone = (Space) super.clone();
-            tClone.mBlocks=(HashMap<String, Position>) this.mBlocks.clone();//ブロックの座標
-            tClone.mSpaceSize=(HashMap<String, int[]>) this.mSpaceSize.clone();//座標空間の広さ
-            tClone.mXDepth=(HashMap<Integer, Integer>) this.mXDepth.clone();//穴の位置と深さ
-            tClone.mFixedBlocks=(ArrayList<String>) this.mFixedBlocks.clone();
-            tClone.mUpwardFlag=(HashMap<String, Boolean>) this.mUpwardFlag.clone(); //上にブロックが乗っているかのフラグ
+            tClone.mBlocks = (HashMap<String, Position>) this.mBlocks.clone();//ブロックの座標
+            tClone.mSpaceSize = (HashMap<String, int[]>) this.mSpaceSize.clone();//座標空間の広さ
+            tClone.mXDepth = (HashMap<Integer, Integer>) this.mXDepth.clone();//穴の位置と深さ
+            tClone.mFixedBlocks = (ArrayList<String>) this.mFixedBlocks.clone();
+            tClone.mUpwardFlag = (HashMap<String, Boolean>) this.mUpwardFlag.clone(); //上にブロックが乗っているかのフラグ
             return tClone;
         } catch (Exception e) {
             e.printStackTrace();
@@ -391,7 +392,7 @@ public class Space implements Cloneable {
         }
         System.out.println("");
         System.out.println("Depth=" + mXDepth);
-		System.out.println("mUp="+mUpwardFlag.size());
+        System.out.println("mUp=" + mUpwardFlag.size());
     }
 
 
